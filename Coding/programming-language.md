@@ -16,7 +16,7 @@ Comment.
 
 ## Control blocks
 ### Conditions: `if`, `unless`, `when`
-`when` is a `switch`-like construct, that returns the result of the value assigned to the first condition met.
+`when` is a `switch`-like construct, that returns the result of what is assigned to the first condition met.
 When no `else` case is provided, it falls back to `nothing`
 ```kt
 age_category = 
@@ -30,13 +30,20 @@ age_category =
 		else: "[insert thanos meme] Impossible." 
 ```
 ### Loops: `while`, `for`, `until`, `do...while`, `do...until`, `iterate`
-`iterate` is used with an array or a map, and loops through it, setting `item` and `index` variables (for arrays) or `key` and `value` variables (for maps)
+`iterate` is used with an array or a map, and loops through it, setting `key`, `index` and `value` variables
 
 ```kt
-my_map = [
-    
+map[num or yon or str] my_map = [
+    thing: yes
+    amismart: no
+    thingie: 4
+    stuff: "yikes"
 ]
-iterate 
+iterate my_map
+    ouput "#${index+1}: $value" if value
+//#1: thing
+//#3: thingie
+//#4: stuff
 ```
 ### Others: `with`
 `with` is a handler that automatically executes stuff before and/or after the `with`, using the `with`'s variable (when applicable) and value passed as arguments
