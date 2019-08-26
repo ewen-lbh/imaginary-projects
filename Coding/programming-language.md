@@ -40,7 +40,7 @@ map[num or yon or str] my_map = [
     stuff: "yikes"
 ]
 iterate my_map
-    ouput "#${index+1}: $value" if value
+    ouput "#${index+1}: $key" if value
 //#1: thing
 //#3: thingie
 //#4: stuff
