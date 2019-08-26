@@ -1,3 +1,4 @@
+
 # Langage de prog immaginaire lol
 
 Ne requiert PAS d'utilisation de lib externe type momentjs, lodash, etc: tout est inclus
@@ -13,16 +14,50 @@ Comment.
 */
 ```
 
+## Control blocks
+### Conditions: `if`, `unless`, `when`
+`when` is a `switch`-like construct, that returns the result of the value assigned to the first condition met.
+When no `else` case is provided, it falls back to `nothing`
+```kt
+age_category = 
+	when age is
+		69: "Nice"
+		in 1..3: "Toddler"
+		in 4..12: "Kid"
+		in 12..17: "Teenager"
+		in 18..100: "Adult"
+		> 100: "World-record holder"
+		else: "[insert thanos meme] Impossible." 
+```
+### Loops: `while`, `for`, `until`, `do...while`, `do...until`, `iterate`
+`iterate` is used with an array or a map, and loops through it, setting `item` and `index` variables (for arrays) or `key` and `value` variables (for maps)
+
+```kt
+my_map = [
+    
+]
+iterate 
+```
+### Others: `with`
+`with` is a handler that automatically executes stuff before and/or after the `with`, using the `with`'s variable (when applicable) and value passed as arguments
+
+
 ## Scopes
-New scopes are created *only* when a specific piece of code is encapsulated in `{}`'s, or in a method/function definition
+New scopes are created *only* when a specific piece of code is encapsulated in `{}`'s
 
 Please encapsulate if/else/switch/when/... only when *absolutely necessary*
+Using curly braces while defining methods/functions is recommended (unless writing short functions)
 
 ## Defining functions
 
 ### Signature
 
 `fun function_name = (arguments | flags) { ... }`
+#### Anonymous functions
+**with arguments**
+`(arg1, arg2) ==> arg1+arg2*2` 
+**without arguments**
+`fun ==> "yikes"`
 
 ### Arguments
 
@@ -45,8 +80,6 @@ Please encapsulate if/else/switch/when/... only when *absolutely necessary*
     - *Hard type* `str arg?`
     - *Soft type* `str:arg?`<br>Defaults to the type's [initialization value](#types)
 - *Other arguments* `...options`—Registers `options` as a `[name:value]` map containing args whose name don't match arguments in signature
-
-[^3]: fefe
 
 ### Flags
 - *Defaults to `yes`* : `!flag_name`
@@ -89,7 +122,7 @@ fun output = (STR string) ==> stdout string
 
 ## Calling functions
 ```kt
-fun func = (a:num?, b:any=0.1 | flag) ==> log(a, b, flag)
+fun func = (a:num?, b:any=0.1 | flag) ==> debug(a, b, flag)
 param = "lol"
 a = 2
 b = 3
@@ -102,7 +135,7 @@ func(a)                   //a = num 2, b = num 0.1, flag = no
 func(a, "string")         //a = num 2, b = str string, flag = no
 func a, b | flag          //a = num 2, b = num 3, flag = yon yes
 func a: 66.6 b: "thingie" //a = num 66.6, b = num 3, 
-func(a, b | !flag)         //a = num 2, b = num 3, flag = yon no
+func(a, b | !flag)        //a = num 2, b = num 3, flag = yon no
 func|flag                 //a = num 0, b = num 0.1, flag = yon yes
 ```
 As you can see, parenthesis can sometimes be omitted, that's why **properties and methods cannot use the same identifiers.** Internally, doing `thing.stuff` will call `.stuff.get()`, even if it's a property. Properties have implicitly defined methods that do this:
@@ -174,32 +207,55 @@ stdout other.to_str //UndefinedError: variable "other" is not defined here. Chec
 
 Ducoup TOUTES les fonctions/méthodes retournent des valeurs par défaut, dans les classes, this est return par la methode au lieu de muter this
 
+## Opérateurs `and`, `not` et `or`
+### Dans des conditions
+servent de combinateurs classiques:
+```kt
+debug (yes and no) // yon no
+debug (yes or no) // yon yes
+debug (not no) // yon yes
+```
+### En tant qu'opérateurs de *control flow*
+```kt
+fun f1 ==> no
+fun f2 ==> output "hehe"
+// exécute f2 seulement si f1 existe ET renvoie une valeur truthy
+f1 and f2 //==> yon no
+// exécute f2 si f1 n'existe pas OU renvoie une valeur falsey.
+f1 or f2 //hehe
+```
+ 
 ## Types
 
 ### Opérateur `as`
-Coerce un type vers un autre:
+Syntactic sugar pour la méthode `<type>.as_<type>`
+Peut prendre un argument max.
+(Pour plusieurs arguments, on utilise la méthode directement)
 
 ```kt
-// In the real world, use str.alphabet
-my_str = "abcdefghijklmnopqrstuvwxyz"
-arr[num] my_arr = my
+dynamic date = dat.now
+output date as str "DD/MM/YYYY HH:mm"
+date->as_str "DD/MM/YYYY HH:mm" // Marche seulement pour les varables dynamic
 ```
 
 ### **Dat**es
 ```kt
 my_dat = 2019-08-14T08:07 or 2019-08-14 or 08:06
-//==> DAT 2019-08-14T08:07
+//==> dat 2019-08-14T08:07
+my_month = ANY-09-ANY // represents just a month of any year, of any day
 ```
 
-Initialization: `dat.now`<br>
+Initialization: `dat.now`
 Format: `[<year>-<month>-<day>]T[<hours>:<minutes>]`
+#### Methods
+- `date.`
 
 ### **Num**bers (int==float)
 
 ```kt
 my_num = 1000 or 0.458 or 10_000_000
 ```
-Initialization: `0`<br>
+Initialization: `0`
 Format: `[<digit-or-underscore...>.]<digit-or-underscore...>`
 
 ### **Str**ings
@@ -233,6 +289,7 @@ Format: `<"~" || "/"><identifier-friendly-or-string>/[<identifier-friendly-or-st
 
 
 ### **Arr**ays
+Arrays are just maps with incrementing numbers starting from 0 as keys.
 
 ```kt
 my_arr = ["kfid", 9394, [ 8,88,8]]
@@ -253,7 +310,7 @@ my_map."key-2" //==> STR jdkdk
 my_map->key //==> NUM 8383
 my_map //==> NUM 8383
 
-map2 = [:] //==> MAP{}
+map2 = [:] //==> MAP (empty)
 map2->to_y //==> YON no
 
 item = "test"
@@ -408,19 +465,46 @@ class file:
 
 ## Builtins
 
+Method names starting with `__` are internal methods
+
 ### `str`'s
 
-### Case convertions
-Methods are named `.<case_name>case` and any case can be converted to any case.
+#### Case convertions
+Any case can be converted to any case.
 
 List of case convertions methods:
-- `upper` (`some string` => `SOME STRING`)
-- `lower` (`some string` => `some string`)
-- `title` (`some string` => `Some String`)
-- `kebab` (`some string` => `some-string`) can be used w/ `.ascii` to 'slugify' strings for urls
-- `snake` (`some string` => `some_string`) can be used w/ `.uppercase` to make UPPER_SNAKE_CASE
-- `camel` (`some string` => `someString`) can be used w/ `.uppercase` to make PascalCase
-
-
-### Misc
+- `.uppercase` (`some string` => `SOME STRING`)
+- `.lowercase` (`some string` => `some string`)
+- `.title_case` (`some string` => `Some String`)
+- `.kebab_case` (`some string` => `some-string`) can be used w/ `.ascii` to 'slugify' strings for urls
+- `.snake_case` (`some string` => `some_string`) can be used w/ `.uppercase` to make UPPER_SNAKE_CASE
+- `.camel_case` (`some string` => `someString`) can be used w/ `.uppercase` to make PascalCase
 - `.upperfirst` (`some string` => `Some string`)
+- `.random_case` (`
+
+#### Others
+- `.ascii(str:replacement="-")` replaces accents with their ascii counterpart, and removes non-convertible characters, to replace them with `replacement`
+- `.replace(str:search, str:replacement, num:max_replacements?)`
+- `.remove(str:search, num:max_removals?)`
+- `.trim(str:using=" "|start, end)`
+- `.length`
+
+
+### `arr`'s
+Arrays are not really a type, so all the map methods are also applicable to arrays.
+
+### `map`'s
+Note: function that takes "items" as arguments take a map that looks like [key: (the key), value: (the value)]
+- `.sort (fun sort_fun?)` sorts alphabetically by default. the function takes two items: the previous item and the current being iterated over. The function must return a `yon`
+- `.transform (fun transformer)` iterates through the array and replace each value with the result of `transformer(item)`
+- `.shuffle (fun shuffler?)` `shuffler`: takes the current item as an argument, and shuffles it if the function returns `yes`. By default, this function is as follows: `fun shuffler = (item) ==> yes`
+```kt
+my_arr = [1, 5, 69, 2, 1, 5980]
+my_arr->shuffle item ==> item.value != 1 //==> [1, 5980, 2, 5, 1, 69]
+```
+Note: This does *not* change the map/array's keys, but changes the `index`—an internal property to each map/array item. This allows maps to have an order that can be changed. The same thing occurs with `.sort`
+- `.length` 
+- `.deduplicate`
+- `.keys ` or `.indexes` (`.indexes` is an alias)
+- `.values` 
+- `.__indexes` internal property that each item has. 
