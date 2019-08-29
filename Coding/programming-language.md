@@ -15,22 +15,50 @@ Comment.
 ```
 
 ## Control blocks
+### As modifiers
+As in ruby, the following keywords can be used after a statement, as a _modifier_.
+- For conditions, the statement modified will be executed if the condition is validated
+- For loops, the statement will be considered as the loop's body (for the do...until/do...while blocks, the `do` must be placed before the statement, as with its classic "block" usage)
 ### Conditions: `if`, `unless`, `when`
+`if` works as expected, with no parenthesis around the condition
+`unless condition` is the same as `if not (condition)`
+
 `when` is a `switch`-like construct, that returns the result of what is assigned to the first condition met.
 When no `else` case is provided, it falls back to `nothing`
+
+The condition will be built using the part after the `when` and before the `:`
+See the comments below
 ```kt
 age_category = 
-	when age is
-		69: "Nice"
-		in 1..3: "Toddler"
-		in 4..12: "Kid"
+	when age
+		== 69: "Nice" //Computed condition: age == 69
+		in 1..3: "Toddler" //Computed condition: age in 1..3
+		in 3..12: "Kid"
 		in 12..17: "Teenager"
-		in 18..100: "Adult"
+		in 17..100: "Adult"
 		> 100: "World-record holder"
 		else: "[insert thanos meme] Impossible." 
 ```
-### Loops: `while`, `for`, `until`, `do...while`, `do...until`, `iterate`
-`iterate` is used with an array or a map, and loops through it, setting `key`, `index` and `value` variables
+### Loops: `while`, `with-while-do` `until`, `do...while`, `do...until`, `iterate`, `break`, `next`
+`while`, `do...while` and `break` work as expected.
+`next` is like `continue`
+
+`until condition` is the same as `while not (condition)`
+The `while` loop can be a standard definition-condition-assignement shortcut, like a regular `for` loop:
+```
+with variable=value while condition do assignement
+//Example
+with i=0 while i<=arr.length do i+=1
+```
+For this particular example, though, the `iterate` loop is way more appropriate and recommended:
+
+`iterate` is used with an array or a map, and loops through it, setting `key`, `index` and `value` variables.
+You can also define your own variables that will be computed using  `key`, `index` and/or `value` at each iteration. If you override one of these methods, the previous assignement will not affect the next.
+You can also use the `if` or `unless` modifiers here.
+The syntax is:
+```
+iterate <iterable> [with <variable>=<expresion>[, <variable>=<expresion>[, <variable>=<expresion>[, ...]]]] [<"if" || "unless"> <condition>]
+```
 
 ```kt
 map[num or yon or str] my_map = [
@@ -39,11 +67,15 @@ map[num or yon or str] my_map = [
     thingie: 4
     stuff: "yikes"
 ]
-iterate my_map
-    ouput "#${index+1}: $key" if value
-//#1: thing
-//#3: thingie
-//#4: stuff
+iterate my_map with nth=index+1.ordinal|short if value
+    ouput "$nth $key"
+//1st thing
+//3rd thingie
+//4th stuff
+
+//Could be used to iterate over half the items:
+iterate my_map if index.odd
+    output index
 ```
 ### Others: `with`
 `with` is a handler that automatically executes stuff before and/or after the `with`, using the `with`'s variable (when applicable) and value passed as arguments
@@ -473,7 +505,12 @@ class file:
 ## Builtins
 
 Method names starting with `__` are internal methods
-
+### `num`'s
+- `.ordinal(|short, prefix)` (`4.ordinal` => `fourth` || `3.14.ordinal|short` => `3rd` || `3.95.ordinal|prefix` => `th`) Will apply `.round` to the number
+- `.floor`
+- `.ceil`
+- `.round(num:precision?)` Will round the number to `precision` decimal places (0 = a whole number)
+- ~~`.fixed(num:digits)`~~ Use `str.pad(characters, "0")` instead
 ### `str`'s
 
 #### Case convertions
@@ -487,7 +524,8 @@ List of case convertions methods:
 - `.snake_case` (`some string` => `some_string`) can be used w/ `.uppercase` to make UPPER_SNAKE_CASE
 - `.camel_case` (`some string` => `someString`) can be used w/ `.uppercase` to make PascalCase
 - `.upperfirst` (`some string` => `Some string`)
-- `.random_case` (`
+- `.random_case` (`some string`=> `sOMe StRiNg`)
+- `.alternate_case(|uppercase_first)` (`"some string".alternate_case` => `sOmE StRiNg` || `"some string".alternate_case|uppercase_first` => `SoMe StRiNg`) will skip over non-uppercasable characters (eg. Here the space is not uppercasable, so the letter next to it will be uppercase, not lower)
 
 #### Others
 - `.ascii(str:replacement="-")` replaces accents with their ascii counterpart, and removes non-convertible characters, to replace them with `replacement`
@@ -495,6 +533,7 @@ List of case convertions methods:
 - `.remove(str:search, num:max_removals?)`
 - `.trim(str:using=" "|start, end)`
 - `.length`
+- `.pad(num:characters, str:using|start, end)` Will pad a `str` to `characters` characters, using the `using` str. Will pad to the left (`start`), to the end (`end`) or to the center (`start` _and_ `end`)
 
 
 ### `arr`'s
