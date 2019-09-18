@@ -210,10 +210,10 @@ STR thing = "tjifbfjdn" //==> STR "tjifbfjdn"
 thing = 5 //=> Error: can't set the str "thing" to a num
 ```
 
-### `Dynamic`
+### `hybrid`
 
 ```kt
-dynamic thing = "jdjekskk" //==> STR "jdjekskk"
+hybrid thing = "jdjekskk" //==> STR "jdjekskk"
 thing = 5 //==> NUM 5
 ```
 
@@ -272,9 +272,9 @@ Peut prendre un argument max.
 (Pour plusieurs arguments, on utilise la méthode directement)
 
 ```kt
-dynamic date = dat.now
+hybrid date = dat.now
 output date as str "DD/MM/YYYY HH:mm"
-date->as_str "DD/MM/YYYY HH:mm" // Marche seulement pour les varables dynamic
+date->as_str "DD/MM/YYYY HH:mm" // Marche seulement pour les varables hybrid
 ```
 
 ### **Dat**es
