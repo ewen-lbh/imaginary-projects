@@ -1,0 +1,82 @@
+= Mathematics-like programming language
+:toc:
+
+== Assignement
+```js
+let variable a type = value
+variable2 := value
+```
+
+== Checks
+```
+variable = value
+
+variable >= value
+variable ≥ value
+
+variable <= value
+variable ≤ value
+
+variable in set
+variable ∈ set
+
+variable not in set
+variable ∉ set
+
+set1 is superset of set2
+set1 ⊂ set2
+
+// same for `subset`, `not subset` and `not superset`
+```
+
+== Lists
+```js
+let mySet a set = { 1, 4, 5, 6, 7, 10/3, 0.88, "gojreo" }
+mySet_2 = 5 //true
+```
+
+== Ranges
+```js
+let myInclusiveRange = [1, 5]
+let myExclusiveRange = ]1, 5[
+let myWeirdRange1 = ]1, 5]
+let myWeirdRange2 = [1, 5[
+```
+
+== Functions
+```js
+let f(x) = ...
+f:x|->...
+
+//Anonymous functions
+x|->...
+
+//Functions with a body
+f(a, b, c) = {
+    ...
+    => returnValue
+}
+```
+
+== Operations on lists and ranges (_sets_)
+
+```go
+A := {1, 5, 8, 6}
+B := {6, 10, 11}
+
+C := A inter B
+C = {6} = A ∩ B//true
+
+D :=  A union B
+D = A ∪ B = {1, 5, 6, 8, 10, 11} //true
+// Use vectors (a, b, ...) to allow duplicate values & no auto-ordering
+
+#D = 6 //true
+∑(i=0, #D-1) D_i = 1+5+6+8+10+11 = 41 //true
+∏(i=0, #D-1) D_i = 1*5*6*8*10*11 = 26400 //true
+D inter complexs = D ∩  = Ø //true
+#D ~ set //true
+
+∃A //true
+∃E = E exists //false
+```
