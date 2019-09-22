@@ -331,8 +331,12 @@ Format: `<"~" || "/"><identifier-friendly-or-string>/[<identifier-friendly-or-st
 Arrays are just maps with incrementing numbers starting from 0 as keys.
 
 ```kt
-my_arr = ["kfid", 9394, [ 8,88,8]]
-ARR[STR] my_arr = ["kdkd" 666] //TypeError: my_arr is an array of strings, can't add NUM 666 to it.
+my_arr = ["kfid", 9394, [8,88,8]]
+my_arr:2 //==> ARR[ NUM 8, NUM 88, NUM 8 ]
+my_arr->remove|last //==> ARR[ STR kfid, NUM 9394 ]
+my_arr << "lol" //==> ARR[ STR kfid, NUM 9394, STR lol ]
+"start" >> my_arr //==> ARR[ STR start, STR kfid, NUM 9394, STR lol ]
+my_arr[1...5] //OutOfBound: my_arr:5 doesn't exist.
 arr2 = [] //==> ARR (empty)
 arr2->to_y //==> YON no
 ```
@@ -464,13 +468,13 @@ use * from io // Imports every `io` symbol, but pollutes the namespace. `use io`
 use term
 
 class file:
-    def new(PTH path)
+    fun new = (PTH path) {
         this.path = path
+    }
 
-    def this.contents
-        ==> read path //Will search for `path` then `this.path`
+    fun .contents ==> read path //Will search for `path` then `this.path`
 
-    def this.valid_encoding?
+    def .valid_encoding?
         encoding->file.encoding // equivalent to this.encoding = file.encoding
         with encoding
             when "utf8" or "utf-8"
@@ -482,7 +486,7 @@ class file:
                 ==> no
 
 
-    def this.log(color?) // Équivalent à "color=nothing"
+    def .log(color?) // Équivalent à "color=nothing"
         if "utf8" and not term::supports? "utf8"
             volatile term = term::name
             warn "UTF-8 not supported on $term. The output might be corrupted."
