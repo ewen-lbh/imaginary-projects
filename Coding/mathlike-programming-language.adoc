@@ -3,8 +3,11 @@
 
 == Assignement
 ```js
-let variable a type = value
-variable2 := value
+let variable a type = value //explicit type declaration
+variable2 := value // implicit type declaration
+
+// Example:
+let A a range = ]-∞, 8]
 ```
 
 == Checks
@@ -37,10 +40,11 @@ mySet_2 = 5 //true
 
 == Ranges
 ```js
+// Ranges *cannot* be nested
 let myInclusiveRange = [1, 5]
 let myExclusiveRange = ]1, 5[
 let myWeirdRange1 = ]1, 5]
-let myWeirdRange2 = [1, 5[
+let myWeirdRange2 = [1, 5[ //behaves like Python's range()
 ```
 
 == Functions
@@ -71,12 +75,23 @@ D :=  A union B
 D = A ∪ B = {1, 5, 6, 8, 10, 11} //true
 // Use vectors (a, b, ...) to allow duplicate values & no auto-ordering
 
-#D = 6 //true
-∑(i=0, #D-1) D_i = 1+5+6+8+10+11 = 41 //true
-∏(i=0, #D-1) D_i = 1*5*6*8*10*11 = 26400 //true
-D inter complexs = D ∩  = Ø //true
-#D ~ set //true
+#D  = |D| = 6 //true (cardinality)
+∑(i=0, #D-1) D_i = 1+5+6+8+10+11 = 41 //true (i=0 by default and #set-1 by default (so ∑(i=0, #D-1) D_i = Σ(D) D_i )
+∏(i=0, #D-1) D_i = 1*5*6*8*10*11 = 26400 //true (same defaults and shorthand syntax as Σ)
+D inter complexs = D ∩ ℂ = Ø //true
+#D ~ number //true (type checking)
 
 ∃A //true
-∃E = E exists //false
+∃E // false
+E exists //false
+
+F := (4,5,6,7,4,1,5)
+Σ*(F) = 4567415 //concatenation with the Kleene Star
+```
+
+== Set builder notation
+```haskell
+Ω := { x ∈ ℝ | x > 5 } // returns a range when #Ω = +∞, otherwise returns a list.
+Ω := { (x,y) ∈ ℕ | x ≤ 10 ∧ y < x } // returns a 2-column vector comprised on ranges (because the yielded results are not countable)
+let B a 2-column vector = { (a,b) | (a < 10) ∧ (b > a) ∧ (a > 10) ∨ a ∈ [1, 5] inter ℕ ∧ b = 4}
 ```
