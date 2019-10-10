@@ -1,0 +1,215 @@
+==== Parsing StudentML ====
+by Ewen Le Bihan
+created 2019-09-11T16:30
+v1
+studentml code
+
+Syntax definitions
+====
+
+
+        a token that starts with an uppercase and is longer than one character and is only made up of alphanumeric characters is considered an indentifier, defined somewhere else as a combination of other tokens
+
+        Indentifier+ is the same as:
+            Indentifiers
+                Indentifier
+                Indentifiers Indentifier
+            and using "Indentifiers"
+
+            [...] means that the tokens inside [] are optional (if the square brackets and the tokens inside ARE NOT separated by spaces)
+
+            an uppercase "U" followed by a plus sign "+" followed by 4 hexadecimal numbers [a-fA-F0-9]  is considered as the litteral represented by the unicode code represented by the 4 digits
+
+            tokens that are surrounded with left parenthesis "(" and right parenthesis ")" are considered "to be defined" tokens, that holds special meanings inside of them
+
+            some token that DOES NOT match any of the preceding conditions is considered a litteral string, to be taken as-is
+
+Document
+    Title Newline Informations Newline Fragment+
+Title
+    = = = = Space String Space = = = =
+Space
+    SingleSpace
+    Space SingleSpace
+SingleSpace
+    U+0020
+String
+    (Any, except:Newline)
+Newline
+    U+000A
+    U+000D U+000A
+Informations
+    Information
+    Informations Newline Information
+Information
+    Author&Type
+    CreatedDate
+    ModifiedDate
+    VersionDeclaration
+    StylingDeclarations
+    FootnotesPlacement
+    MathModeDeclaration
+    DefaultCodeHighlighterDeclaration
+Author&Type
+    a Space String
+    by Space String
+    a Space String Space by Space String
+CreatedDate
+    created Space the Space Date
+    created Space Date
+Date
+    Year - Month - Day
+    Year - Month - Day T Hour : Minute
+    Year - Month - Day T Hour : Minute : Second
+    Day / Month
+    Day / Month / Year
+    Day / Month / Year Space Hour : Minute
+    Day / Month / Year Space Hour : Minute : Second
+Year
+    (Integer, positive)
+Month
+    (Integer, range:1-12)
+Day
+    (Integer, range:1-31)
+Hour
+    (Integer, range:0-23)
+Minute
+    (Integer, range:0-60)
+Second
+    Minute
+ModifiedDate
+    modified Space the Space Date
+    modified Space Date
+VersionDeclaration
+    v OptionalSpaces String
+    version OptionalSpaces String
+OptionalSpaces
+
+    Space
+StylingDeclarations
+    StylingDeclaration
+    StylingDeclarations Newline StylingDeclaration
+StylingDeclaration
+    Color Space Element 
+    Element Space FontDeclaration 
+    Element Space BackgroundColorDeclaration
+    Color Space Element Space BackgroundColorDeclaration
+    Color Space Element Space FontDeclaration 
+    Color Space Element Space BackgroundColorDeclaration Space FontDeclaration 
+    Color Space Element Space FontDeclaration Space BackgroundColorDeclaration
+Color
+    # HexNumber HexNumber HexNumber
+    # HexNumber HexNumber HexNumber HexNumber HexNumber HexNumber
+    (CSSColorName)
+HexNumber
+    (Regex, expression:[0-9a-fA-F])
+Element
+    (StudentMLElementNames)
+FontDeclaration
+    i n Space FontIdentifier
+FontIdentifier
+    String Space FontWeight
+    FontWeight Space String
+    String
+    FontWeight
+BackgroundColorDeclaration
+    o n Space a Space Color background
+    Color background
+FootnotesPlacement
+    footnotes Space at Space the Space end
+    footnotes Space at Space the Space bottom Space of Space the Space page
+MathModeDeclaration
+    chemistry Space math
+    normal Space math
+DefaultCodeHighlighterDeclaration
+    (HighlighterName) Space code
+Fragment
+    [HeadingIDDeclaration] Heading BlankLine BodyFragment BlankLine
+    BodyFragment BlankLine
+HeadingIDDeclaration
+    [ # (Integer, positive) ]
+    [ # (Regex, expression:[\w _]) ]
+Heading
+    H1
+    H2
+    H3
+    H4
+    H5
+    H6
+H1
+    TitleString Newline ====
+TitleString
+    (Any, except:{Newline, /, #})
+H2
+    TitleString Newline ----
+H3
+    == OptionalSpaces TitleString
+H4
+    === OptionalSpaces TitleString
+H5
+    ==== OptionalSpaces TitleString
+H6
+    ===== OptionalSpaces TitleString
+BlankLine
+    Newline Newline
+BodyFragment
+    Paragraph
+    List
+    Admonition
+    CodeBlock
+    EscapeBlack
+    Table
+    MathBlock
+    GraphBlock
+    FootnoteDefinition
+Paragraph
+    ParagraphStrings
+    Paragraph Newline ParagraphStrings
+ParagraphStrings
+    ParagraphString
+    ParagraphStrings Space ParagraphString
+ParagraphString
+    BoldString
+    UnderlinedString
+    ItalicString
+    SupString
+    SubString
+    HighlightedString
+    StruckString
+    MonospaceString
+    LinkString
+BoldString
+    * String *
+UnderlinedString
+    _ _ String _ _
+ItalicString
+    _ String _
+    / / String / /
+SupString
+    ^ String ^
+SubString
+    ~ String ~
+HighlightedString
+    Color [ String ]
+StruckString
+    ~ ~ String ~ ~
+MonospaceString
+    { String }
+    HighlighterName { String }
+    { String } ( HighlighterName )
+LinkString
+    http [s] : / / Url
+    < String > . Tld
+    < String > http [s] : / / Url
+    < String > Url
+    < < TitlePath > >
+    < String > # (Integer, positive)
+    < String > # ( String )
+    < String > < < TitlePath > >
+Url
+    (URL)
+Tld
+    . (ListOfTLDs)
+TitlePath
+    TitleString
+    TitlePath / TitleString

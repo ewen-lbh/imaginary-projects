@@ -27,7 +27,7 @@ As in ruby, the following keywords can be used after a statement, as a _modifier
 When no `else` case is provided, it falls back to `nothing`
 
 The condition will be built using the part after the `when` and before the `:`
-See the comments below
+
 ```kt
 age_category = 
 	when age
@@ -538,6 +538,7 @@ List of case convertions methods:
 - `.trim(str:using=" "|start, end)`
 - `.length`
 - `.pad(num:characters, str:using|start, end)` Will pad a `str` to `characters` characters, using the `using` str. Will pad to the left (`start`), to the end (`end`) or to the center (`start` _and_ `end`)
+- `::alphabet(str:name="latin")` Outputs
 
 
 ### `arr`'s
@@ -545,7 +546,8 @@ Arrays are not really a type, so all the map methods are also applicable to arra
 
 ### `map`'s
 Note: function that takes "items" as arguments take a map that looks like [key: (the key), value: (the value)]
-- `.sort (fun sort_fun?)` sorts alphabetically by default. the function takes two items: the previous item and the current being iterated over. The function must return a `yon`
+- `.sort (fun sorter?)` sorts alphabetically by default. the function takes two items: the previous item and the current being iterated over. The function must return a `yon`
+- `.filter (fun filterer?)` filters the array by keeping items only when `filterer` returns `yes`
 - `.transform (fun transformer)` iterates through the array and replace each value with the result of `transformer(item)`
 - `.shuffle (fun shuffler?)` `shuffler`: takes the current item as an argument, and shuffles it if the function returns `yes`. By default, this function is as follows: `fun shuffler = (item) ==> yes`
 ```kt

@@ -1,0 +1,408 @@
+StudentML
+a Markup language by Ewen Le Bihan
+created the 18/08/2019
+v0.2
+footnotes at the end
+
+Document information
+====
+It should be included after the top-level title, *without*  a empty line after it. 
+Each new infomation is placed on a new line
+Here are the values you can set:
+
+- author and document type: 
+  - a Type by Author Name, or
+  - by Author Name, or
+  - a Type
+- dates:
+  - modified: 
+    - modified (the) DATETIME
+  - created: 
+    - created (the) DATETIME
+- version: v(ersion)0.1
+- Styling: See <<Styling>>
+- Footnotes placement: footnotes POSTITION KEYWORD
+  The position keyword can be one of:
+  - at the end (means at the end of every paragraph where the footnote is defined)
+  - at the bottom of a page (default)
+- Math mode: MODE math
+  The MODE can be one of:
+  - normal (default)
+  - chemistry: uppercase letters are not in italic by default
+    use double quotes to italicize them back.
+    This is useful for writing chemistry equations with atoms, like
+    `"CH"_4+"H"_2"O" -> "CO"_2 + "whatever"`
+- Default code blocks higlighter name: HIGLIGHTER code
+  - HIGLIGHTER can be one of: json, yaml, python, php, ruby, cpp,...
+  - HIGLIGHTER can only contain alphanumeric characters and underscores
+
+Titles
+====
+
+WARN: Title can only contain inline code/monospace, text modifications (except higlighting), inline math and *pure* (not rewritten) urls
+
+||==== Top title ==== (h1 + <title>)
+||
+||Heading (h2)
+||====
+||
+||Sub-Heading (h3)
+||----
+||
+||== Sub-sub-Heading (h4)
+||=== Subsubsub (h5)
+||==== subsubsubsub (h6)
+
+That's enough. For deeper headings, just use emphasized text:
+
+Text modifications
+====
+
+- *bold* text
+- __underlined__ text
+- _italic_ text
+- ^sup^ text[^1]
+- ~sub~ text[^1]
+- blue[higlighted in blue]
+- lightGrey[highlighted in light grey]
+- #f00[highlighted in red (text color switches to white)]
+- ~~strikethrough~~ text (prefer <deletion tags><<Deletions & additions>> when possible)
+
+[^1]: Nesting sub/sup text is not supported. Use math mode for complex sub/super scripts.
+
+Links
+====
+
+Rewritten
+----
+
+"text content" (mx3creations.com/link)
+text content (mx3creations.com/link) //Will use the first word before the link only
+
+You don't need to add the https:// protocol, but
+
+If the text content is the same as the domain name, and you are not using slashes in the URL, you can use the sortcut syntax:
+
+||"domainname".tld
+
+Will link to https://domainname.tld, and show "domainname"
+(only if ".tld" is one of the registered TLDs)
+
+EXPL: "mx3creations".com
+
+Direct links
+----
+
+direct links require it tho, like this: https://youtube.com
+
+E-mails
+----
+
+emails are also linked automatically: me@gmail.com
+and you can use <url rewriting>lol@yahoo.net with them
+
+Admonitions
+====
+
+Info: 
+      Admonitions are supported:
+      Info, warn, expl (for example)
+
+Tip:  
+      More admonitions can be added, but
+      this will hurt portability
+
+You can also put some text in a box, without an icon:
+
+[
+      Use this
+      Text inside will be "boxed"--if this word even exists
+      Note:
+            The square brackets *must* be on new lines, alone.
+]
+
+Math
+====
+
+A second-degree polynomial of the form `ax^2+bx+c` can also be written as:
+`
+a(x-alpha) + Delta / 2a
+"or"
+(x-alpha)(x+beta)
+`
+Aligining (for steps of equation transformations)
+`
+stuff = thing
+&= 1/2 + 4/2
+&= 1+4 / 2
+&= 5/2
+&= 2.5
+`
+
+The math syntax uses <asciimath>.org, and renders text with <KaTeX>.com, when <MathML>.org is not supported
+
+Code/Monospaced
+========
+
+Code can be written inline {like this} or in a block:
+If you use a single syntax higlighter over multiple code blocks and don't want to write the same one each time, you can set the default code higlighter (see <<Document information>>) and use "code" as a language name:
+
+Example:
+      studentml ----
+      
+      --------
+
+python ----
+from stackoverflow import solution
+solution()
+--------
+
+ruby ----
+puts "something", :thing => stuff
+--------
+
+
+ignore ----
+ytjkyukyuk
+--------
+
+Lists
+========
+
+The different list syntaxes can be mixed within one list.
+All types of lists can be nested.
+Use a blank line to separate two lists
+
+Definition lists
+----
+
+- A word: its definition
+- Another word: 
+  - one definition, or
+  - another definition
+- A word: 
+  - one piece of information
+  - another piece of information
+
+an ", or" at the end of a line indicates that the following definition is an *alternate* (useful for <Learn_it!>learn_it.com )
+
+Nested
+----
+
+- A simpler list
+  More text inside the same item
+  Can event include lists!
+- but nested
+  - like this
+
+Checkboxes
+----
+
+- [ ] Can also be /checkboxed/
+
+Ordered lists
+----
+
+#. This will be converted to one
+#. and two 
+#. And three
+
+1. You can also do this
+2. More legible as plain text
+3. But can be confusing
+5. If you jump indexes
+4. And change the order
+10. (tho it wil render in order)
+
+
+Tables
+====
+
+"Table label"
+ | Table Header
+ | Other Header
+
+ | Onto the second row
+ | And still on the second one
+ 2| This one spans on 2 columns
+
+ | Third row
+
+ | A long row that can continue
+ and even include:
+ "Another table"
+  | yes, you can
+  | i'm not mad
+
+  | this is really possible
+
+Note: The number of columns is determined by the row
+      with the highest number of columns. Missing columns
+      in other rows are considered blank
+]
+
+Double-entry tables
+----
+
+
+
+Graphs
+====
+
+GRAPH:horizontal bars "Chart label (optional)"
+      y "Axis label (unit)" 0-100
+      x "Axis label (unit)" 0-10
+      -
+      red 5, 10.5, 401
+      green 67, 89, 092
+      blue 0, 67, 89
+
+GRAPH: "Default type for plots is 'lines'"
+      x "You can ommit the range or the axis label"
+      -
+      sin(x)
+      cos(x)^2
+
+[#1]Available chart types:
+- bars (vertical)
+- horizontal bars
+- lines
+- radar
+- pie--or donut
+- dots
+
+The format is as follows:
+||GRAPH:chart_type "Chart label"
+||      axis "label" (unit) min-max
+||      -
+||      color "label" datapoints_or_function
+
+Replace the following with:
+- axis: the axis to define range, unit and/or label for
+      - x
+      - y
+      - both (denoted as x,y)
+- chart_type: See <the list above>#1. Defaults to "lines"
+- datapoints_or_function: Multiple datapoints, or *one* function
+      - datapoints: ||<x>[, <x>[, <x>...]]
+      - function: a math expression
+- min-max: the axis' range, eg. 0-10 will set the axis on `[0;10]`
+- (unit): the axis' unit. This really is just for formatting
+- color: css color names or valid hex colors (like #268CCE or #f00)
+
+All of these are optional. A minimal graph could just be:
+
+GRAPH:-
+      sin x
+
+Or, a little more reasonable:
+
+GRAPH:"Sine function representation"
+      x,y 0-5
+      red "`sin(x)`" sin x
+
+Example: 
+      Datapoints:
+      - 1, 2, 3: Regular data points
+      - 1;2, 3;4, 5;6: x;y data points
+      - Any other expression: parsed as a math function, use the variable `x` or `n`
+
+Footnotes, references
+====
+Assignements are made at the *start* of a line.
+
+In-line
+----
+Some text[^Foot note text]
+
+Assigning an id
+----
+
+== Assignement
+[#3]Some text where the user will jump to
+
+== Referencement
+The user will jump <from here>#3
+
+you can also use named IDs. If you have spaces, reference them with:
+<link text>(#id name)
+
+Automatic id assignement
+----
+Headers automatically get an id assigned, which you can reference with double angle brackets
+For more infomation, see <<Automatic id assignement>>
+
+NOTE: automatic id assignement does *not* require the reference's header case to match.
+      EXPL: This will work:
+      ||<<jump tO tHis>>
+      ||=== Jump to this
+
+Duplicate headers can be accessed if they are the child of a unique header, as such, this is possible:
+
+<<Suites géométriques/Somme des termes>>
+
+The 'slash' character will be parsed as a sub-heading 'path' marker when the resulting path can be resolved. If you want to force a litteral '/', you have to escape it.
+
+
+Including HTML
+====
+
+This is not possible. It clashes with the link rewriting syntax and writing XML tags is difficult, slow and ugly in plain text.
+However, to escape content, you can use a double vertical bar, which disables the parser for the rest of the line:
+
+This text will be parsed ||||but not this one
+
+Blocks are defined with:
+
+[
+      ||[ Text inside will not be parsed ] But this will
+]
+
+Styling
+====
+
+Styling should not be done extensively, as you could simply edit a global css file, so that all your files render consistently, and that someone else can see them with their own global stylings.
+However, if you wish to use your own styles for some elements, you can.
+The syntax is the following:
+- One style a line.
+- No blank line(s) between styles (see <<Document informations>>)
+- || [<color>] <element> [in <font weight> <font family>] [on a <color> background]
+- <color> is a valid CSS color name or hex code
+- Font weight and family can be switched.
+- <font weight> is one of:
+  - black (CSS: 700)
+  - bold (CSS: 600)
+  - normal (CSS: 500) (default)
+  - light (CSS: 300)
+  - thin (CSS: 200)
+- <font family> is one of:
+  - text: all text. Will be overwritten by others
+  - headings: all headings
+  - h1: top-level title
+  - h2 up to h6
+  - boxed content: boxed content
+  - admonitions
+  - ...
+
+
+EXPL: blue boxed content in Manrope thin on a #268CCE background
+
+Abbreviations
+====
+
+Critic markup
+====
+
+Critique-related tags like {<ins>}(html) and {<del>}(html) can be useful if the document you're working on is shared w/ teammates
+
+Insertion & deletion
+----
+
+Some ++inserted++ text
+Some --deleted-- text
+
+Replacement
+----
+
+Some 
+

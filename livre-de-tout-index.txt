@@ -1,0 +1,119 @@
+Livre de tout
+====
+
+Sommaire
+----
+
+0. Fonctionnement du Livre
+1. Comment apprendre
+    1.5. En anglais
+    1.1. En programmation
+    1.2. En matières scientifiques
+    1.3. Dans d'autres matières scolaire
+    1.4. En création graphique (MAO, PAO, VFX, GFX)
+2. Informatique générale
+    2.1. Anatomie des interfaces utilisateurs
+    2.1. Iconographie universelle
+    2.2. Lexique de base
+        2.2.2. Général
+        2.2.1. Internet
+    2.2. Raccourcis clavier
+        2.2.1. Navigation dans du texte
+        2.2.2. Universels
+        2.2.3. Navigateurs web
+    2.3. Composants d'un ordinateur
+        2.3.1. Les composants
+        2.3.2. Les interactions entre composants
+        2.3.3. Monter son PC
+    2.4. Divers utilitaires pratiques
+	2.4.1. Gestionnaire de presse-papiers
+	2.4.2. La compose-key
+    2.5. Sécurité de base
+	2.5.1. Les mots de passe
+	    2.5.1.1. Les gestionnaires de mot de passe
+
+1. Mathématiques, physiques
+    1.1. Algébrique de base
+    1.2. Variables
+    1.7. Ensembles
+    1.3. Fonctions et suites
+    1.4. Vecteurs, coordonnées
+    1.5. Analyse (statistiques)
+    1.6. Nombres complexes
+7. L'anglais
+    7.1. Grammaire
+        7.1.1. Types de mots
+        7.1.2. Conjuguaisons
+            7.1.2.1. Verbes réguliers
+            7.1.2.2. Verbes irréguliers
+        7.2.3. Types de phrases
+    7.2. Vocabulaire
+8. Informatique bas-niveau
+    8.1. Le processeur
+        8.1.1. Les cycles d'horloge
+        8.1.2. Le registre
+    8.2. La carte graphique
+    8.2. La mémoire vive "RAM"
+    8.3. Le stockage permanent
+    8.4. L'encodage d'information
+        8.4.1. Le binaire
+        8.4.2. L'héxadécimal
+        8.4.3. L'encodage de texte  //TOLEARNMORE
+            8.4.3.1. ASCII
+            8.4.3.2. Unicode, UTF-8
+            8.4.3.3. Autre encodages obscurs
+        8.4.4. L'encodage d'images  //TOLEARN
+        8.4.4. L'encodage de vidéos  //TOLEARN
+3. Programmation
+    3.2. Langages de description
+    3.1. Algorithmique
+    3.3. Langages de scripting
+    3.4. Jargon
+    3.7. Expressions régulières
+    3.7. Bonne pratiques
+        3.7.1. Commenter et documenter son code
+        3.7.2. Conventions de nommage et de formatage
+    3.7. La gestion des librairies
+        3.7.1. Les environnements virtuels
+        3.7.2. Partager son code comme librairie
+    3.6. Le versionnage
+        3.6.1. Concepts
+        3.6.1. Git
+        3.6.2. SVN, Mercurial et autres
+    3.5. La philosophie de l'open source
+    3.5. Langages de programmation
+    3.6. Utilisations concrètes
+        3.6.1. Site web statique
+        3.6.2. Site web dynamique
+        3.6.2. Application web
+        3.6.3. Logiciel natif //TOLEARN
+        3.6.3. Application mobile //TOLEARN
+            3.6.3.1. Android
+            3.6.3.2. iOS
+        3.6.3. Scripts d'automatisation
+    3.8. La distribution
+        3.8.1. Déployer un site web
+            3.8.1.1. Statique
+            3.8.1.2. Dynamique
+        3.8.2. Déployer un logiciel (webapp ou natif)
+            3.8.2.1. Electron
+            3.8.2.2. Compilateurs
+    3.8. Création de langages
+        3.8.1 Concepts
+        3.8.2 Langages de programmation
+        3.8.3 Langages de description
+4. Musique assistée par ordinateur
+6. Graphisme
+    6.1. Compositing
+    6.2. Design vectoriel
+    6.3. Illustration
+    6.4. Mise en page
+    6.4. Typographie
+        6.4.1. Jargon  //TOLEARNMORE
+        6.4.2. Création de polices  //TOLEARN
+5. Création de vidéos
+    5.1. Montage basique
+    5.2. Notion des "keyframes"
+    5.2. Effets spéciaux
+    5.3. 3D  //TOLEARN
+    5.4. Motion design
