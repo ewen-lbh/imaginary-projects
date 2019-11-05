@@ -57,8 +57,10 @@ You can also define your own variables that will be computed using  `key`, `inde
 You can also use the `if` or `unless` modifiers here.
 The syntax is:
 ```
-iterate <iterable> [with <variable>=<expresion>[, <variable>=<expresion>[, <variable>=<expresion>[, ...]]]] [<"if" || "unless"> <condition>]
+iterate [over] <iterable> [with <variable>=<expresion>[, <variable>=<expresion>[, <variable>=<expresion>[, ...]]]] [<"if" || "unless"> <condition>]
 ```
+
+NOTE: `over` is *not* a reserved keyword in itself—you can use it as a variable name—but is reserved when following `iterate `.
 
 ```kt
 map[num or yon or str] my_map = [
@@ -74,7 +76,7 @@ iterate my_map with nth=index+1.ordinal|short if value
 //4th stuff
 
 //Could be used to iterate over half the items:
-iterate my_map if index.odd
+iterate over my_map if index.odd
     output index
 ```
 ### Others: `with`
@@ -235,7 +237,7 @@ stdout my_str //blablabla
     volatile other = 3.1415
     log other  //==> STR~other
 }
-stdout other.to_str //UndefinedError: variable "other" is not defined here. Check for a potential "volatile" keyword
+stdout other.as_str //UndefinedError: variable "other" is not defined here. Check for a potential "volatile" keyword
 ```
 
 ### Opérateur `->`
@@ -338,7 +340,7 @@ my_arr << "lol" //==> ARR[ STR kfid, NUM 9394, STR lol ]
 "start" >> my_arr //==> ARR[ STR start, STR kfid, NUM 9394, STR lol ]
 my_arr[1...5] //OutOfBound: my_arr:5 doesn't exist.
 arr2 = [] //==> ARR (empty)
-arr2->to_y //==> YON no
+arr2->as_y //==> YON no
 ```
 Initialization: `[]`<br>
 Format: `[<open>][<value>[, <value>[, <value> ...]]][<close>]` <br>(`<close> = "]", <open> = "["`)
@@ -354,13 +356,19 @@ my_map->key //==> NUM 8383
 my_map //==> NUM 8383
 
 map2 = [:] //==> MAP (empty)
-map2->to_y //==> YON no
+map2->as_y //==> YON no
 
 item = "test"
 map3 = [
     :item, // Same as item: item
     other: 5
 ] //==> map item: "test", other: 5
+
+// If you use identation and explicitly define the variable's type as `map`, you can ommit brackets.
+
+map map4 =
+    thing: stuff
+//==> MAP [thing:stuff]
 ```
 Initialization: `[:]` <br>
 Format: `[<open>][<key>: <value>[, <key>: <value>[, <key>: <value> ...]]][<close>]`<br>
@@ -396,7 +404,7 @@ my_col = #268cce
 my_col = blue //Undefined: Variable `blue` is not defined
 ```
 
-Initialization: `#00000000` (`#00000000.to_rgba_str //==> rgba(0,0,0,0)`)<br>
+Initialization: `#00000000` (`#00000000.as_rgba_str //==> rgba(0,0,0,0)`)<br>
 Format: `#<hexadecimal-digit * 6>`
 
 ## Fonctions anonymes
@@ -415,10 +423,8 @@ ARR[MAP[STR]] map2 = [
     [key: "al", color: "#00FF00"]
 ]
 
-map2->to_arr { this.key if  }
+map2->as_arr->filter( this ==> this.key in ['ew','en'] )
 //==> ARR "ew", "en"
-
-
 
 map2 //==> ARR "ew", "en"
 ```
@@ -429,10 +435,10 @@ Exemple
 class map
     //...
 
-    def this.to_arr(FUN mapper) // fun = function
+    def this.as_arr(FUN mapper) // fun = function
          ARR array = []
-         each this
-             //key & value defined automatically by `each`
+         iterate over this
+             //key & value defined automatically by `iterate`
              array += mapper this
         ==> array // return == "==>"
 ```
@@ -444,6 +450,9 @@ mot clé "new" pour instancier.
 `new Thing` <===> `Thing.new()`
 
 les args passés à new sont automatiquement mis comme props de l'instance, si non utilisé par la méthode new
+
+Une méthode commençant par `.` reçoit implicitement `this` (une variable contenant l'instance de l'objet)
+Une méthode ne commençant pas par `.` reçoit implicitement `self` (une variable contenant la classe de l'objet)
 
 ex:
 
@@ -472,7 +481,8 @@ class file:
         this.path = path
     }
 
-    fun .contents ==> read path //Will search for `path` then `this.path`
+    def .contents
+        ==> read path //Will search for `path` then `this.path`
 
     def .valid_encoding?
         encoding->file.encoding // equivalent to this.encoding = file.encoding
@@ -546,8 +556,7 @@ Arrays are not really a type, so all the map methods are also applicable to arra
 
 ### `map`'s
 Note: function that takes "items" as arguments take a map that looks like [key: (the key), value: (the value)]
-- `.sort (fun sorter?)` sorts alphabetically by default. the function takes two items: the previous item and the current being iterated over. The function must return a `yon`
-- `.filter (fun filterer?)` filters the array by keeping items only when `filterer` returns `yes`
+- `.sort (fun sort_fun?)` sorts alphabetically by default. the function takes two items: the previous item and the current being iterated over. The function must return a `yon`
 - `.transform (fun transformer)` iterates through the array and replace each value with the result of `transformer(item)`
 - `.shuffle (fun shuffler?)` `shuffler`: takes the current item as an argument, and shuffles it if the function returns `yes`. By default, this function is as follows: `fun shuffler = (item) ==> yes`
 ```kt
@@ -560,3 +569,12 @@ Note: This does *not* change the map/array's keys, but changes the `index`—an 
 - `.keys ` or `.indexes` (`.indexes` is an alias)
 - `.values` 
 - `.__indexes` internal property that each item has. 
+
+## Code examples
+### Determinating whether a color needs foreground text to be black or white
+
+```kt
+// Get the color from the store
+col bg = store.get('background-color')
+col text_color = 'black' if bg.is_light() else 'white'
+```
