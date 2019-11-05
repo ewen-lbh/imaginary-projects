@@ -1,0 +1,355 @@
+= proglang spec
+Ewen Le Bihan
+v2
+
+== Types
+This languages offers a lot of different types by default (even colors!) and special litterals to declare each of them. But this can be a disadvantage, as not all types can have their own logical litterals.
+Here is a table listing all the built-in types.
+
+=== "Atomic" types
+
+[cols="1,2a,6a"]
+|===
+| Type name | Value declaration syntax | Operators & their behaviors
+
+| boolean 
+|
+[horizontal]
+true :: `yes`, `on` and `true`
+false :: `no`, `off` and `false`
+
+|
+[horizontal]
++ :: logical and
+* :: logical or
+- :: logical not
+
+| string
+| 
+[horizontal]
+with interpolation :: `"a string"` or \``a string``
+without interpolation :: `'a litteral string'`
+multiline (w/ interpolation):: `{" my string
+and i can put newlines in it "}`
+multiline (w/o interpolation) :: `{' my literal string
+that doesn't have any sort 
+of interpolation
+whatsoever.
+'}`
+
+|
+[horizontal]
++ :: Append to string
+* :: Repeats the string
+- :: Remove all occurences of substring from string
+$ :: (written inside the quotes) interpolates the variables into the string (`\`` or `"`-quotes only)
+§ :: format the string with the object
+
+| numbers
+|
+[horizontal]
+integer :: `42`
+floating-point :: `6.9`
+
+|
++, -, / and * act like you would expect
+
+NOTE: The modulo `%` does not exist, but the methods `.modulo n`, `.every n`, `.even?` and `.odd?` should be enough.
+
+[horizontal]
++**+ or ^ :: exponentiation
+a % :: `a / 100` (unary)
+
+
+| dates
+|
+[horizontal]
+date :: `YYYY-MM-DD`
+time :: `"T"hh:mm`
+datetime :: `YYYY-MM-DD"T"hh:mm` (ISO 8601 format)
+"any" :: allows for a generic date: a year-less date is equal to any date that matches it, regardless of its year: `ANY-10-28` will be equal to any date that points to the October, 28th.
+
+|
+[horizontal]
+a + b :: Adds `b` (as a duration) to `a` (as a date)
+a - b :: Remove `b` (as a duration) from `a` (as a date)
+a == b :: Checks if `a` equals `b`
+a === b :: Checks if `a` strictly equals `b` (`2019-ANY-12 !== 2019-10-12`)
+a > b :: `a` is in the future compared to `b`
+a < b :: `a` is in the past compared to `b`
+
+| colors
+|
+[horizontal]
+hexadecimal :: `#268cce`
+hexadecimal, short :: `#fff == #ffffff`
+css color name :: `"blue" as a color` or `〈color blue〉`
+|
+[horizontal]
++ :: adds the two colors
+- :: adds the first with the opposite of the second (binary) or inverts the color (unary)
+not :: inverts the color
+~= :: the compared colors have the same _name representation_
+
+| paths
+|
+[horizontal]
+starting at the root directory :: `/my/path/directory/with\ spaces`
+starting at the home directory :: `~/my/path/to/a/file.extension`
+starting at the cwd :: `@/my/path/from/the/current/directory`
+
+|
+[horizontal]
++ or / :: Appends to the path
+a - b :: Remove the last occurence of b from a
+a ^ n :: Go back `n` directories from `a`
+n ^ a :: Go back `n` directories from `a`
+
+|===
+
+=== Collections
+This language has only one indexable, iterable, ordered and mapped collection:
+a `map`.
+
+OOP is approched diffrently: 
+
+* Objects are just maps
+* Classes define map structures, and are simply some huge syntactic sugar for a map "factory"
+* The syntax `instance = new CLASS_NAME` is syntactic sugar for `instance = CLASS_NAME.new`
+* Each map's _item_ holds his position in the map with an _index_. In the special case of "arrays" or "lists", _indexes_ and _keys_ are equivalent, but they're not to be confused.
+
+==== Declaration 
+Declaration is made using the following syntax `[index: key: value]` or `[key: value]`:
+```
+my_map = [
+  lorem: "ipsum"
+  dolor: "sit amet."
+]
+```
+
+==== Lookup
+* Lookup by index is made with the `.nth` method (that you can--like everything in this language--override) 
+** `my_map.nth 4` gives the fifth item of the map
+** `my_map.first == my_map.nth 0`
+** `my_map.last == my_map.nth (my_map.size - 1)`
+* Lookups by key are made with the dot syntax. This works for...
+** Strings, naturally: `my_map.my_key_name`
+** Numbers: `my_map.0`
+** Variables: `my_map.$variable_name`
+** Computed values: `my_map.${my expression}`
+
+==== Iteration
+The `iterate` keyword is used:
+
+```
+my_map = [
+  lorem: "ipsum"
+  dolor: "sit amet."
+]
+
+iterate over my_map
+  log "$key#$index: $value"
+
+— returns lorem#0: ipsum\ndolor#1: sit amet.
+```
+
+`index`, `key` and `value` are set automatically and cannot be overriden
+
+== Declarations & assignements
+=== Declaring variables
+`=` is used to both declare and assign values to names (making that name a defined variable)
+
+The variable's type can be explicitly set, or is infered when not specified:
+```
+number my_number = 2.485
+string my_string = 2.485 — returns "2.485"
+my_variable = 2.485
+my_variable is a number — returns yes
+```
+
+Once a variable is declared, its type cannot be changed. This behavior may be altered using the `hybrid` keyword, as such:
+
+```
+hybrid var_name = 42
+var_name = "it works"
+```
+
+=== Declaring 
+
+== Operators
+
+Operators can be completely different from one type to another.
+Operators are simply functions defined in the type's prototype, that receives two arguments: 
+
+- value: a reference to the object's `.value` function
+- other: the other value passed as a comparison
+
+`==`, `>` and other comparison operators are operators like others, and could return something else than booleans (tho the conditional statements always try to convert the result passed as the condition to a boolean).
+
+Operators are in fact simply functions with a non-alphanumeric name: since objects are maps, their keys can be anything.
+The only operators that have alphanumeric names are `not`, `and` and `or`.
+
+When you write `a + b`, the compiler/interpreter understands `a.+ b` instead.
+
+To declare _unary_ operators--operators with only one argument, such as `not`--simply define your operator function in your map and do not let it take any arguments.
+
+If you have an operator that can be either unary or binary (eg. `-`), let your function take one _optional_ parameter, and use a `when` or `if` statement to separate the two cases
+
+Any character or sequence of characters can serve as a key name (and thus as an operator name), except the following:
+
+`.{}[]()"':``
+
+Obviously, using one of the sequences used by comments is impossible too
+
+Due to a high chance of ambiguity with other declarations, *all binary operators must be called with spaces surrounding the operator*
+
+== Comments
+
+[cols="1a"]
+|===
+^| *Single-line*
+| — (_em-dash_)
+| – (_en-dash_)
+| --- (triple dash)
+^| *Multiline*
+| ====\n ... \n==== (four equal signs, a new line, your comment, a new line, four equal signs.) cannot contain `====`
+| ----\n ... \n---- (four dashes, a new line, your comment, a new line, four dashes.) cannot contain `----`
+|===
+
+== Docstrings
+
+To comment a function or method, use the following format:
+
+```
+----
+module_name.method_name (module or instance method)
+A description of this function's purpose. Do not explain arguments or flags here.
+
+ARGUMENTS
+argument_name | (annotation) accepted type | default value | Explanation
+
+OPTIONS
+option_name | Explanation
+
+RETURNS
+return type
+----
+```
+
+`annotation` can be one of:
+
+- converts
+- enforces
+
+If the module only contains module methods, you can ommit the "(module)" after method_name, but only if the module/submodule has the string `Only module methods.` or `Module methods only.` as the beginning of the description
+
+To explain modules or submodules, use this format:
+
+```
+====
+parent_module.module_name by author_name1, author_name2 and author_name3
+A description of the module
+
+LICENSE: license name
+full license text, or URL to the license text
+you can instead use LICENSE: same as parent to refer to the parent module's license.
+
+SOURCE
+URL to the source code (a online repo most of the time)
+====
+```
+
+Of course, `ARGUMENTS`, `OPTIONS`, `RETURNS`, `SOURCE` and--but not recommended—`LICENSE` may be omitted when not applicable.
+
+=== Examples
+
+```
+====
+Only module methods. The language's core module, includes all the syntactically-sugared "keywords"
+====
+module core
+
+----
+core.unless
+Evaluates the `condition`, and executes the `action` if `conditon` is false.
+
+ARGUMENTS
+condition | (converts) boolean  | false   | The condition that will be evaluated
+action    | (enforces) function | nothing | The function that will be run if `condition` evaluates to `false`.
+
+RETURNS
+[
+  result: any
+  ran: boolean
+]
+----
+unless: (boolean:condition, function:action){
+  condition = not condition
+  ==> core.if condition, action
+}
+```
+
+```
+module number
+
+----
+number.modulo
+Calculates the modulo of a number
+
+ARGUMENTS
+n | (converts) number | The number to calculate the modulo against: a mod n
+
+RETURNS
+number
+----
+modulo: n ==> value - n.absolute * (value / n.absolute).floor
+
+
+----
+number.even
+Checks if the number is even.
+
+OPTIONS
+zero_is_even | Counts zero as an even number.
+
+RETURNS
+boolean
+----
+even: |zero_is_even ==> if zero_is_even and this == 0 then yes else this.modulo 2 == 0 
+
+----
+number.odd
+Checks if the number is odd.
+
+OPTIONS
+zero_is_even | Counts zero as an even number.
+
+RETURNS
+boolean
+----
+odd: |zero_is_even ==> if zero_is_even and this == 0 then no else this.modulo 2 != 0
+```
+
+== modules
+=== Creation
+When you put a `module` declaration at the top of your file, any top-level key-value pair declaration will be exported, such that `key: value` will be accessible as `module_name.key` when using the module in a file. regular `=` assignements will not be accessible outside of the module's file. You can--of course--use the methods of a module in itself, 
+
+==== Module methods vs instance methods
+When the parser scans through your functions, it will categorize a method as an instance method if the variable `this` is used, and as a module method otherwise.
+A instance method is called on a variable of that module, a module method is called on the module directly.
+
+==== Creating a type
+When creating a modulo that is a type, declare your module using `type` instead of `module`.
+Then, you can define:
+
+[horizontal]
+operators:: Special methods that have the unary/binary syntactic sugar and that can be any character except alphanumeric (more details in the <<Types>> section)
+`.as_<type>` :: Special methods that will be used for the `~`/`is` and `as` operators.
+`.syntax` :: A special method that is used to describe how to declare a value of your type without using any method: this method will be called with a string, and you have to return either true--if your syntax matches the string given--or false otherwise
+
+NOTE: Regarding `.syntax`, if two syntaxes are in conflict, the _import order_ of the modules will matter: the last-imported module will win. (this means that you can even provide your own type module that extends a built-in type by inheriting its `.syntax` method!)
+
+
+== Nested iterate loops
+
+In a nested iterate loop, the variable `outer` is automatically created for each inner loop, and gives access to the index, value and key of the parent loop, and possibly another `outer` item that is a map containing the parent loop of the parent loop's index, value, key and possibly an `outer` item, and this until we reach the outermost loop.

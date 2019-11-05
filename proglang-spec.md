@@ -1,6 +1,36 @@
 # Langage de prog immaginaire lol
 
-Ne requiert PAS d'utilisation de lib externe type momentjs, lodash, etc: tout est inclus
+Core concepts:
+
+- prefer symbols (operators) over methods or keywords for common operations (one example is `==>`, the equivalent of many languages' `return`), and methods over operators for rarely-used operations (examples are the modulo, or bitwise operations)
+- include everything that you would generally use a library for (a perfect example is momentjs/date-fns and javascript)
+- try to make most operations possible for a type, whilst staying logical (example: the division "/" is an alias to "+" for `path` (path) types, because concatenating paths with "/" feels natural, but you can't do a logical "not" on paths)
+- be type safe and type flexible
+- declare defaults, types and as much things as possible in a function declaration
+- every method returns something, and everything is a method.
+- be as clean as possible
+    - identation-based
+    - one statement per line
+    - as little punctuation as possible (eg. function calls don't require parentheses, as *everything is callable*)
+    - one-letter variables reserved for automatic variables (eg. `v`, `k` and `i` inside `iterate` loops)
+    - keywords are readable but everything is done so that you can assign every word you like (eg. type names only matter inside `as` or `~` operations), because *every keyword is in fact a method of the `core` module, and writing 
+    ```
+    if 4/3
+        do_thing 8
+    ```
+    is syntactic sugar for writing `core.if 4/3, { do_thing 8 }`
+    - `{}` *always* refers to the creation of a *scope*. A *scope* simply defines multiple statements: *functions are in fact scopes that have been stored in a variable—the function's name.*
+- provide as much types as possible, but do not make duplicates (unlike python's tuples, lists and sets, that represent basically the same thing, with little-to-no differences):
+    - colors, regular expressions and others require their own type because they represent different things: a color should not be represented by a string because it is *not* a sentence, but a completely different type of data.
+    - all iterables can be merged into a single type: a map. A list or array is simply a map with numerical, incrementing keys. An iterable also as an implicit order, where—in the special case of an array—indexes (holding the order of a map's items) and keys (identifying what the value represents) are the same thing.
+    - functions *are* different. We can't just say that it's a type like another one. That's because functions or methods represent a *protocol*, a sequence of actions and conditions, not pure and atomic *data*. But functions are held by variables. So, as in python, functions can be passed to another function to execute them (eg. to implement callbacks)
+- writing programs should feel natural. That's why the language prefers keywords over symbols when it is unusual (eg. `and`, `or` and `not` instead of `&&`, `||` and `!`)
+
+## TO CATEGORIZE
+```
+a.b c == b c of a
+example: 7..10.every 9 == every 9 of 7..10
+```
 
 ## Comments
 
@@ -12,6 +42,56 @@ Line
 Comment.
 */
 ```
+
+## Operators
+
+Space around operators is _required_, except for `-`.
+
+Operator | General behavior (see [types](#Types) for specific behaviors by type) | Example(s)
+:-------:|---------------------------------------|-------------------
+`+`      | Addition | `8+9 ==> 17`
+`-`      | Subtraction | `9-10 ==> -1`<br>`-8 == -1*8 ==> yes`
+`*`      | Multiplication
+`/`      | Subtraction
+`**`     | Exponentiation
+`%`      | _nothing_, as the methods `.even?`, `.odd?`, `.every n` and `.modulo n` will suffice.
+`§`      | Format strings | `"{a:.05f}" § [a: math.pi] ==> 3.14159`
+`$`      | Interpolation | `"I am $name" ==> "I am Groot"` (if `name` is defined and equal to `"Groot"`)
+`==`     | Equality
+`===`    | Strict equality
+`~=`     | Approximative equality
+`>`      | Strict superiority
+`<`      | Strict inferiority
+`>=`     | Superiority
+`<=`     | Inferiority
+`<<`     | Appending
+`>>`     | Prepending
+`++`     | Incrementation
+`--`     | Decrementation
+`><`     | Squashing (_fitting a number between 0 and 1 to a range_) | `math.e >< 4..8 ==> `
+`..`     | Range (inclusive)
+`...`    | Splat operator
+`in` or `∈` | Ownership | `8 in [1,5,8,9] ==> yes`
+`or` or `⋁` | Logical or
+`and` or `⋀` | Logical and
+`not` or `!` | Negation
+`=`    | Assignement
+`->`   | Direct assignement (see [the `->` operator](Opérateur->))
+`-->`  | Direct assignement from argument (see [the `-->` operator](Operator-->)) | `a = b(a) == a-->b ==> yes`
+`==>`  | Value returning
+`.` | Member access, decimal separator
+`:` | Key-value mapping
+`{` | Scope start
+`}` | Scope end
+`(` ... `)` | Grouping
+`[` ... `]` | Iterable creation
+`;` | ~~Statement ending~~ this is a beautiful language. You don't need any semicolon anywhere.
+`,` | Enumeration
+`<<` ... `>>` or `〈` ... `〉` | Typed value declaration
+`|` | Separation of flags and arguments
+`@` | Prototype acess | `@string.foo = fun (a) ==> a+a*value`<br>`"lolz".foo 2 ==> "2lolzlolz"`
+`&` | Variable reference access (_used to modify a variable from an outer scope_)
+`~` | Equality of types | `"abc" ~ string ==> yes`
 
 ## Scopes
 New scopes are created *only* when a specific piece of code is encapsulated in `{}`'s, or in a method/function definition
@@ -30,7 +110,7 @@ Please encapsulate if/else/switch/when/... only when *absolutely necessary*
 - *Typed* `arg:type`
 - *With default* `arg=default_value`
 - *Optional* `arg?`<br>Same as `arg=nothing`
-- *Optional typed* `arg:str?`<br>Defaults to the type's [initialization value](#types)
+- *Optional typed* `arg:string?`<br>Defaults to the type's [initialization value](#types)
 - *Other arguments* `...options`—Registers `options` as a `[name:value]` map containing args whose name don't match arguments in signature
 
 ### Flags
@@ -44,13 +124,13 @@ NOTE: this is the recommended function declaration code style when the combined 
 use stdout from io
 use term
 
-fun colored_output(
-    message:str, end="\n", color:col?, ...prefixes
-    | monochrome, !use_ansi_pkg
-) = {
-    start = prefixes.values as str
+colored_output = (
+    message:string, end="\n", color:color?, prefixes...
+    | monochrome, !use_ansi_pkg, other_flags...
+) ==> {
+    start = prefixes.values as string
     // Prefer to "$start$message$end"—only use it when the string is not only variables
-    message = concat (start, message, end)
+    message = start + message + end
     if monochrome
         warn "Use `output` instead" cause: deprecation
         ==> output message
@@ -59,11 +139,11 @@ fun colored_output(
         warn "$color is not a valid ANSI color name." fallback: "monochrome output"
         ==> output message
     
-    stdout ansi_colors.$color // Prefer this to []-Notation. Reserve it for lists & selecting ranges
+    stdout ansi_colors.$color // Prefer this to []-Notation. Reserve it for electing ranges
 
 }
 
-fun output = (STR string) ==> stdout string
+fun output = (string string) ==> stdout string
 ```
 
 ## Calling functions
@@ -71,9 +151,9 @@ fun output = (STR string) ==> stdout string
 If you call a function with arguments or flags, you can only ommit parenthesis if you aren't chaining functions:
 
 ```kt
-func1.func2.func3 //OK
-func1 param //OK
-func1 param.func2 //SyntaxError
+func1.func2.func3 //Resolves as func1().func2().func3()
+func1 param //Resolves as func1(param)
+func1 param.func2 //Resolves as func1(param.func2())
 func1 func2 // Resolves as func1(func2())
 ```
 ### Named parameter shortcut
@@ -82,7 +162,7 @@ you can call it without using some stupid `long_argument_name: long_argument_nam
 ### Flags-only shortcut
 If you want to call a function but only need to activate/deactivate a flag, you simply do `function_name|flag1, flag2`
 ```kt
-fun func = (a:num?, b:any=0.1 | flag) ==> log(a, b, flag)
+fun func = (a:number?, b:any=0.1 | flag) ==> log(a, b, flag)
 param = "lol"
 a = 2
 b = 3
@@ -91,13 +171,13 @@ b = 3
    We only show ouput as comments for clarity's sake.
 */
 func param                //TypeError: "lol" is not a number
-func(a)                   //a = num 2, b = num 0.1, flag = no
-func(a, "string")         //a = num 2, b = str string, flag = no
-func a, b | flag          //a = num 2, b = num 3, flag = yon yes
-func a: 66.6 b: "thingie" //a = num 66.6, b = num 3, 
-func(a, b | flag)         //a = num 2, b = num 3, flag = yon yes
-func|flag                 //a = num 0, b = num 0.1, flag = yon yes
-func $b                   //a = num 0, b = num 3, flag = yon no
+func(a)                   //a = number 2, b = number 0.1, flag = no
+func(a, "string")         //a = number 2, b = string string, flag = no
+func a, b | flag          //a = number 2, b = number 3, flag = yon yes
+func a: 66.6 b: "thingie" //a = number 66.6, b = number 3, 
+func(a, b | flag)         //a = number 2, b = number 3, flag = yon yes
+func|flag                 //a = number 0, b = number 0.1, flag = yon yes
+func $b                   //a = number 0, b = number 3, flag = yon no
 ```
 ## Assignements de variables
 
@@ -105,16 +185,16 @@ func $b                   //a = num 0, b = num 3, flag = yon no
 
 ```kt
 
-thing = "thinixkdk" //==> STR tjifbfjdn
-STR thing = "tjifbfjdn" //==> STR "tjifbfjdn"
-thing = 5 //=> Error: can't set the str "thing" to a num
+thing = "thinixkdk" //==> string tjifbfjdn
+string thing = "tjifbfjdn" //==> string "tjifbfjdn"
+thing = 5 //=> Error: can't set the string "thing" to a number
 ```
 
 ### `Dynamic`
 
 ```kt
-dynamic thing = "jdjekskk" //==> STR "jdjekskk"
-thing = 5 //==> NUM 5
+dynamic thing = "jdjekskk" //==> string "jdjekskk"
+thing = 5 //==> number 5
 ```
 
 ### `volatile`
@@ -124,14 +204,14 @@ use stdout from io
 my_str = "blablabla"
 {
     volatile my_str = "bla"
-    log my_str //==> STR~bla STR blablabla
+    log my_str //==> string~bla string blablabla
     stdout my_str //bla
 }
 stdout my_str //blablabla
 
 {
     volatile other = 3.1415
-    log other  //==> STR~other
+    log other  //==> string~other
 }
 stdout other.to_str //UndefinedError: variable "other" is not defined here. Check for a potential "volatile" keyword
 ```
@@ -150,35 +230,35 @@ Ducoup TOUTES les fonctions/méthodes retournent des valeurs par défaut, dans l
 Coerce un type vers un autre:
 
 ```kt
-// In the real world, use str.alphabet
+// In the real world, use string.alphabet
 my_str = "abcdefghijklmnopqrstuvwxyz"
-arr[num] my_arr = my
+array[number] my_arr = my
 ```
 
-### Opérateur `is` ou `is  a`
+### Opérateur `~` ou `is`
 Retourne `yes` si `my_var` est du type `type`:
 ```
 my_var = 2.51
-my_var is a num //==> yes
-my_var is a str //==> no
+my_var ~ number //==> yes
+my_var is a string //==> no
 ```
 
-NOTE: Vous *pouvez* utiliser les noms de types comme variables, parce que `num`, `str`, ... représente un type seulement...
-- lors d'un assignement typé (`pth my_pth = ...`)
+NOTE: Vous *pouvez* utiliser les noms de types comme variables, parce que `number`, `string`, ... représente un type seulement...
+- lors d'un assignement typé (`path my_pth = ...`)
 - lors d'une déclaration de valeur typée (`〈pth ...〉`)
 - dans le contexte de l'opérateur `as`
-- dans le contexte de l'opérateur `is`
+- dans le contexte de l'opérateur `is`/`~`
 
-### **Dat**es
+### **date**es
 ```kt
 my_dat = 2019-08-14T08:07 or 2019-08-14 or 08:06
-//==> DAT 2019-08-14T08:07
+//==> date 2019-08-14T08:07
 ```
 
-Initialization: `dat.now`<br>
+Initialization: `date.now`<br>
 Format: `[<year>-<month>-<day>]T[<hours>:<minutes>]`
 
-### **Num**bers (int==float)
+### **number**bers (int==float)
 
 ```kt
 my_num = 1000 or 0.458 or 10_000_000
@@ -186,7 +266,9 @@ my_num = 1000 or 0.458 or 10_000_000
 Initialization: `0`<br>
 Format: `[<digit-or-underscore...>.]<digit-or-underscore...>`
 
-### **Str**ings
+### **R**a**ng**es
+
+### **string**ings
 
 ```kt
 my_str = "sample text" or `sample_text` // both are the same
@@ -198,22 +280,52 @@ Format: `"<string>"`
 ### **R**e**g**ular e**x**pressions
 
 ```kt
-my_rgx = ^[0-9\n]?.+(\s*)$ //==> RGX [0-9\n]?.+(\s*)
-my_rgx = [\w_-]{3} //SyntaxError
-my_rgx = ^$ // RGX (empty)
-my_rgx = ^^\d+.?$$ //==> RGX ^\d.?$
+my_rgx = ^[0-9\n]?.+(\s*)$ //==> RGX ^[0-9\n]?.+(\s*)$
+my_rgx = [\w_-]{3} //error cause: syntax, message: Substraction has no right-side operand (tried to substract "w_")
+my_rgx = ^$ // RGX ^$
+my_rgx = ^^\d+.?$$ //error cause: syntax, message: Cannot parse regular expression, failed at char #2: ^
 ```
-Initialization: `^$`<br>
-Format: `^<regular expression>$`
+#### Initialization
+`^$`
 
+#### Format
+`^<regular expression>$`
+
+#### Operators
+Operator | Action for this type      | Commutative?
+:-------:|---------------------------|---------------
+`a + b`  | Appends `a` to `b`  (without bounds (^ and $))      | No
+`a - b`  | Removes `a` from `b`  (without bounds (^ and $))    | No
+`a / b`  | *raises an error*         | 
+`a * b`  | Repeats `a` `b` times (without bounds (^ and $))| No
+`a == b` | Checks if `a` matches the pattern `b` | No
+`a or b` | Returns `"(?:$a)|(?:$b)" as rgx` (without bounds (^ and $))| Yes
+`a and b`| Returns `"(?:(?:$a)(?:$b))|(?:(?:$b)(?:$a))" as rgx` (without bounds (^ and $))| Yes
+`a ~= b` | Same as `==` | No
+`a in b` | Same as `==` | No
+`a === b`| Checks if the two patterns are equivalent
+
+#### Conversion to other types
+_Types not specified here cannot be converted, and will raise an error with cause `type` upon a conversion attempt._
+Target type | Result | Example | Automatic/implicit conversion?
+:----------:|--------|--------- | ---
+`string`       | The pattern's representation, as typed | `^[\w-_]+$ as string ==> "^[\w-_]+$"` | No
+
+#### Methods
+
+Method signature  | Returns | Example(s)
+:-----------------|:--------|:-----
+`.without_bounds` | `rgx`   | `^(\d+)$.without_bounds == "(\d+)" as rgx`
+`.try string:string`    | `yon`   | `^\w{4}$.try "qwer" == true`<br>`^\w{4}$.try "78azce" == false`
+`.capture string:string|allow_no_matches`| `map`   | `〈rgx (?p<foo>[a-z0-9-])\+(\d+)〉.capture "8+74" == [0:"8+74", foo:"8", 2:"74"]`<br>`〈rgx ([a-z0-9-])\+(\d+)〉.capture "8" //Error cause: No groups found while searching for pattern "([a-z0-9-])\+(\d+)" in string "8"`<br>`〈rgx ([a-z0-9-])\+(\d+)〉.capture|allow_no_matches "8" == []`
 ### **P**a**th**s
 
 ```kt
-my_pth = /home/lol/machin //==> PTH /home/lol/machin
-my_pth = ~/new/thingie //==> PTH ~/new/thingie
+my_pth = /home/lol/machin //==> path /home/lol/machin
+my_pth = ~/new/thingie //==> path ~/new/thingie
 ```
 #### Initialization
-`pth.cwd or pth.home` (Current working directory of terminal, or fallback to home directory)
+`path.cwd or path.home` (Current working directory of terminal, or fallback to home directory)
 
 #### Format
 `<"~" || "/"><identifier-friendly-or-string>/[<identifier-friendly-or-string>/[<identifier-friendly-or-string>/...]]`
@@ -226,14 +338,17 @@ Operator | Action for this type      | Commutative?
 `a / b`  | Same as `+`               | No
 `a * b`  | Repeats path `a` `b` times| No
 `a % b`  | *raises an error*         | 
+`a == b` | Checks if the paths points to the same location (does not take symlinks into account) | Yes
+`a ~= b` | Checks if the paths points to the same location (takes symlinks into account) | Yes
+`a === b`| Same as `a as string == b as string` | Yes
+`a in b` | Checks if the file or folder `a` exists at the location `b` | No
 
-
-### **Arr**ays
+### **array**ays
 
 ```kt
 my_arr = ["kfid", 9394, [ 8,88,8]]
-ARR[STR] my_arr = ["kdkd" 666] //TypeError: my_arr is an array of strings, can't add NUM 666 to it.
-arr2 = [] //==> ARR (empty)
+array[string] my_arr = ["kdkd" 666] //TypeError: my_arr is an array of strings, can't add number 666 to it.
+arr2 = [] //==> array (empty)
 arr2->to_y //==> YON no
 ```
 #### Initialization
@@ -250,18 +365,17 @@ Operator | Action for this type         | Commutative?
 `a - b`  | Removes `b`'s items from `a` | No
 `a / b`  | *raises an error*            | No
 `a * b`  | Copies `a`'s items `b` times in itself | No
-`a % b`  | *raises an error*            | 
 
 
 ### **Map**s
 
 ```kt
 my_map = key: 8383, "key-2": "jdkdk" //==> MAP key: 8383, key-2: "jdkdk"
-my_map.key //==> NUM 8383
-my_map.key-2 //==> NUM 8381
-my_map."key-2" //==> STR jdkdk
-my_map->key //==> NUM 8383
-my_map //==> NUM 8383
+my_map.key //==> number 8383
+my_map.key-2 //==> number 8381
+my_map."key-2" //==> string jdkdk
+my_map->key //==> number 8383
+my_map //==> number 8383
 
 map2 = [:] //==> MAP{}
 map2->to_y //==> YON no
@@ -313,7 +427,7 @@ my_nothing is nothing //==> YON yes
 #### Format
 `nothing`
 
-### **Col**ors
+### **color**ors
 ```kt
 my_col = #268CCE0A // RGBA
 my_col = #268cce
@@ -343,18 +457,18 @@ map =
     key: "tess"
 //==> MAP id: 4, key: "tess"
 
-ARR[MAP[STR]] map2 = [
+array[MAP[string]] map2 = [
     [key: "ew", color: "#363637"],
     [key: "en", color: "#000000"],
     [key: "al", color: "#00FF00"]
 ]
 
 map2->to_arr { this.key if != "al" } // same as this.key if this.key != "al"
-//==> ARR "ew", "en"
+//==> array "ew", "en"
 
 
 
-map2 //==> ARR "ew", "en"
+map2 //==> array "ew", "en"
 ```
 
 Exemple
@@ -364,7 +478,7 @@ class map
     //...
 
     def self.to_arr(FUN mapper) // fun = function
-         ARR array = []
+         array array = []
          each self
              //key & value defined automatically by `each`
              array += mapper self
@@ -400,7 +514,7 @@ use * from io // Imports every `io` symbol, but pollutes the namespace. `use io`
 use term
 
 class file
-    fun new = (PTH path){}
+    fun new = (path path){}
         /*
         In the `new` method, arguments are automatically saved as instance properties.
         To prevent this, delete the variable at the end of the method, as such:
@@ -455,12 +569,12 @@ Au lieu d'utiliser des syntaxes spéciales pour les types on peut faire:
 〈rgx [\d_-]+ ?〉 //==> rgx [\d_-]+ ?
 〈map thing: stuff, other thing: other stuff〉 //==> map thing: stuff, other thing: other stuff
 〈str mon contenu sans guillemets
-avec des retours à la ligne littéraux et des $dollars〉 //str {mon contenu sans guillemets\\navec des retours à la ligne littéraux et des $dollars}
+avec des retours à la ligne littéraux et des $dollars〉 //string {mon contenu sans guillemets\\navec des retours à la ligne littéraux et des $dollars}
 
-〈pth mon/chemin/〉 //==> pth mon/chemin
+〈pth mon/chemin/〉 //==> path mon/chemin
 ```
 
-## Operator shorcuts `+=`, `++`, `-=`, `--`, `/=`, `%=`, `*=`, `?=` and `:=`
+## Operator shorcuts `+=`, `++`, `-=`, `--`, `/=`, `%=`, `*=`, `?=` and `??=`
 
 - `+=`, `++`, `-=`, `--`, `/=`, `%=` and `*=` behave like you would expect:
 ```js

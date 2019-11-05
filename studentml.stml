@@ -184,7 +184,7 @@ Definition lists
   - one piece of information
   - another piece of information
 
-an ", or" at the end of a line indicates that the following definition is an *alternate* (useful for <Learn_it!>learn_it.com )
+an ", or" at the end of a line indicates that the following definition is an *alternate* (useful for  Learn_it! (learn_it.com))
 
 Nested
 ----
@@ -401,8 +401,14 @@ Insertion & deletion
 Some ++inserted++ text
 Some --deleted-- text
 
-Replacement
+Special symbols
 ----
 
-Some 
+Some isolated character sequences are automatically converted for you:
 
+- /!\: ⚠
+- --: –
+- ---: —
+- %o: ‰
+- w/: with
+- 
