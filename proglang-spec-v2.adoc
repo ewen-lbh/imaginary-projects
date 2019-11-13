@@ -24,6 +24,7 @@ false :: `no`, `off` and `false`
 * :: logical or
 - :: logical not
 
+(can also be written with `and`, `or` and `not`)
 | string
 | 
 [horizontal]
@@ -42,7 +43,7 @@ whatsoever.
 + :: Append to string
 * :: Repeats the string
 - :: Remove all occurences of substring from string
-$ :: (written inside the quotes) interpolates the variables into the string (`\`` or `"`-quotes only)
+$ :: (written inside the quotes) interpolates the variables into the string (``` or `"`-quotes only)
 § :: format the string with the object
 
 | numbers
@@ -150,10 +151,82 @@ my_map = [
 iterate over my_map
   log "$key#$index: $value"
 
-— returns lorem#0: ipsum\ndolor#1: sit amet.
+--- returns lorem#0: ipsum\ndolor#1: sit amet.
 ```
 
 `index`, `key` and `value` are set automatically and cannot be overriden
+
+==== Transformations
+See <<Built-ins>> for more operations
+[cols="1,3,2a"]
+|===
+| Operation
+| Solutions
+| Example
+
+| Apppending
+| `map += item` or `map << item`
+| 
+
+| Prepending
+| `item >> map`
+|
+
+| Removing the first/last item(s)
+| `map->remove first: n` (remove the first `n` items) or `map->remove\|first`. Same with the `last` argument/flag.
+| 
+
+| Removing item(s) by key/index
+| `map -= key_s_` or `map.remove index_es_ \| by_index`
+|
+```
+my_map = [
+  a: 2
+  b: 4
+  c: 0
+  d: 666
+]
+
+--- This adapts the indexes of each item. To prevent this, use `.remove` with the `preserve_indexes` flag.
+
+my_map -= ['a', 'c']
+
+----
+[
+  b: 4
+  d: 666
+]
+----
+
+my_map->remove 3 \| by_index
+
+----
+[
+  b: 4
+]
+----
+```
+
+| Switching indexes
+| ``map -> move key to: destination_index``
+|
+```
+my_map = [
+  a: 2
+  b: 4
+  c: 0
+]
+
+my_map->move a to: 1
+----
+[
+  b: 4
+  a: 2
+  c: 0
+]
+----
+```
+|===
 
 == Declarations & assignements
 === Declaring variables
@@ -173,8 +246,6 @@ Once a variable is declared, its type cannot be changed. This behavior may be al
 hybrid var_name = 42
 var_name = "it works"
 ```
-
-=== Declaring 
 
 == Operators
 
@@ -218,7 +289,7 @@ Due to a high chance of ambiguity with other declarations, *all binary operators
 
 == Docstrings
 
-To comment a function or method, use the following format:
+To document a function or method, use the following format:
 
 ```
 ----
@@ -268,6 +339,8 @@ Of course, `ARGUMENTS`, `OPTIONS`, `RETURNS`, `SOURCE` and--but not recommended�
 Only module methods. The language's core module, includes all the syntactically-sugared "keywords"
 ====
 module core
+use import import_module from NATIVE
+use glob
 
 ----
 core.unless
@@ -283,9 +356,38 @@ RETURNS
   ran: boolean
 ]
 ----
-unless: (boolean:condition, function:action){
-  condition = not condition
-  ==> core.if condition, action
+unless = boolean:condition, function:action ==> core.if (not condition), action
+
+----
+core.use
+Imports one or more objects from a module, or import the whole module, prefixed.
+
+ARGUMENTS
+whats  | (enforces) map of strings  | nothing | The list of glob patterns to import, or the module to import.
+modules| (enforces) string or path  | ""      | The module(s) to import `whats` from. Can also use glob patterns. (if this is set to the empty string, imports the module directly)
+
+RETURNS
+[]any | A map of imported modules, in import order.
+----
+use = map of strings whats, string or path module = "" ==> {
+  if not whats.strip
+    fail cause: 'Nothing to import'
+         troubleshoot: "Please `use` at least one module or object"
+  if not module
+    import_module whats.first
+  else
+    resolve_globs = map of strings values ==> iterate over values { glob.find value or value }
+    
+    modules-->resolve_globs
+    whats-->resolve_globs
+
+    imported = []
+    iterate over modules with module=value
+      iterate over whats with what=value
+        try
+          import :module, :what
+        on success
+          imported +=
 }
 ```
 
@@ -302,7 +404,7 @@ n | (converts) number | The number to calculate the modulo against: a mod n
 RETURNS
 number
 ----
-modulo: n ==> value - n.absolute * (value / n.absolute).floor
+modulo = n ==> value - n.absolute * (value / n.absolute).floor
 
 
 ----
@@ -315,7 +417,7 @@ zero_is_even | Counts zero as an even number.
 RETURNS
 boolean
 ----
-even: |zero_is_even ==> if zero_is_even and this == 0 then yes else this.modulo 2 == 0 
+even = |zero_is_even ==> if zero_is_even and this == 0 then yes else this.modulo 2 == 0 
 
 ----
 number.odd
@@ -327,7 +429,7 @@ zero_is_even | Counts zero as an even number.
 RETURNS
 boolean
 ----
-odd: |zero_is_even ==> if zero_is_even and this == 0 then no else this.modulo 2 != 0
+odd = |zero_is_even ==> if zero_is_even and this == 0 then no else this.modulo 2 != 0
 ```
 
 == modules
@@ -349,6 +451,17 @@ operators:: Special methods that have the unary/binary syntactic sugar and that 
 
 NOTE: Regarding `.syntax`, if two syntaxes are in conflict, the _import order_ of the modules will matter: the last-imported module will win. (this means that you can even provide your own type module that extends a built-in type by inheriting its `.syntax` method!)
 
+=== Importing
+
+Importing is done with the `use ... from ...` syntax. You may use the `*` wildcard as you would with glob patterns.
+To importing a full module without polluting the namespace, simply use `import module_name`
+
+.Example
+----
+use map_* from ~/components
+----
+
+(this is actually syntax sugar for the method `core.use`)
 
 == Nested iterate loops
 

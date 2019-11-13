@@ -1,0 +1,87 @@
+= LaTeX Preprocessor
+Ewen Le Bihan
+
+== Global structure
+
+To eliminate the need of a stupid `\begin{document} ... \end{document}`, the structure is as follows:
+
+```
+preamble
+--------
+
+document content
+```
+
+example:
+
+```
+use tikz
+use mathtools
+--------
+
+Lorem ipsum dolor sit amet.
+```
+
+== Normal stem:[LaTeX]
+
+[cols="4a,4,6a"]
+|===
+| Write...
+| Results in
+| Example
+
+| `use packagename`
+| `\usepackage{packagename}`
+| `use tikz`
+
+|`use packagename (options)`
+|`\usepackage[options]{packagename}`
+|`use siunitx (load-configurations = abbreviations)`
+
+|
+```
+@env
+  ...
+```
+|`\begin{env} ... \end{env}`
+|
+```
+@equation*
+  @split
+    pH &= -log[ H3O+ ]
+       &= "p"K_a + log( [A-]_"éq" / [HA]_"éq" )
+Outside the environements.
+@itemize
+  First item.
+  Second item.
+```
+
+|
+```
+@env (options)
+  ...
+```
+|`\begin{env}[options] ... \end{env}`
+|
+
+| `>command`
+| `\command`
+| `>newpage`
+
+| `>command(content)` or 
+```
+>command
+  content
+```
+| `\command{content}`
+| `>si(>kilo>meter>per>hour)`
+
+| `>command[options](content)` or 
+```
+>command (options)
+  content
+```
+| `\command[options]{content}`
+|
+
+|===
