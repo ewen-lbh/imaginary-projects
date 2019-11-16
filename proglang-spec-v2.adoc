@@ -8,9 +8,9 @@ Here is a table listing all the built-in types.
 
 === "Atomic" types
 
-[cols="1,2a,6a"]
+[cols="1,2a,6a,1"]
 |===
-| Type name | Value declaration syntax | Operators & their behaviors
+| Type name | Value declaration syntax | Operators & their behaviors | Default (falsey) value
 
 | boolean 
 |
@@ -20,11 +20,13 @@ false :: `no`, `off` and `false`
 
 |
 [horizontal]
-+ :: logical and
-* :: logical or
-- :: logical not
++, and, & :: logical and
+*, or, \|\| :: logical or
+-, not, ! :: (unary) logical not
 
-(can also be written with `and`, `or` and `not`)
+NOTE: `and`, `or` and `not` are reserved to booleans and always try to convert their operands to booleans
+| `false`
+
 | string
 | 
 [horizontal]
@@ -37,30 +39,31 @@ that doesn't have any sort
 of interpolation
 whatsoever.
 '}`
-
 |
 [horizontal]
 + :: Append to string
 * :: Repeats the string
 - :: Remove all occurences of substring from string
 $ :: (written inside the quotes) interpolates the variables into the string (``` or `"`-quotes only)
-§ :: format the string with the object
+§ or % :: percent-formatting, like Python's
+# :: (unary) returns the string's length
+| `""`
 
 | numbers
 |
 [horizontal]
 integer :: `42`
 floating-point :: `6.9`
-
 |
-+, -, / and * act like you would expect
++, -, /, *, <, >, >=, pass:[<=] and == act like you would expect
 
 NOTE: The modulo `%` does not exist, but the methods `.modulo n`, `.every n`, `.even?` and `.odd?` should be enough.
 
 [horizontal]
-+**+ or ^ :: exponentiation
-a % :: `a / 100` (unary)
-
+a +**+ b or a ^ b :: `a * a repeat b times`
+ %a :: `"${a * 100}%"`
+ #a :: Converts an hexadecimal number to decimal (used for `color` 's literal syntax)
+| `0`
 
 | dates
 |
@@ -78,26 +81,29 @@ a == b :: Checks if `a` equals `b`
 a === b :: Checks if `a` strictly equals `b` (`2019-ANY-12 !== 2019-10-12`)
 a > b :: `a` is in the future compared to `b`
 a < b :: `a` is in the past compared to `b`
+a § b :: formats the date/duration `a` using the format string `b`
+a ~ b :: Checks if `a` is `b`. `b` can be: `date`, `datetime`, `time` or `duration`
+| All values are evaluated as `true`. Default value: `date.now`
 
 | colors
 |
 [horizontal]
-hexadecimal :: `#268cce`
+hexadecimal :: `#268cce as a color`
 hexadecimal, short :: `#fff == #ffffff`
 css color name :: `"blue" as a color` or `〈color blue〉`
 |
 [horizontal]
 + :: adds the two colors
 - :: adds the first with the opposite of the second (binary) or inverts the color (unary)
-not :: inverts the color
+! :: inverts the color
 ~= :: the compared colors have the same _name representation_
+| All values are evaluated as `true`. Default value: `#000000`
 
 | paths
 |
 [horizontal]
-starting at the root directory :: `/my/path/directory/with\ spaces`
-starting at the home directory :: `~/my/path/to/a/file.extension`
-starting at the cwd :: `@/my/path/from/the/current/directory`
+path :: `/my/path/directory/with\ spaces.extension\(optional\)/`
+url :: `http://example.com/internet/path/` or `https://example.com/ssl-encrypted/website/`
 
 |
 [horizontal]
@@ -105,7 +111,46 @@ starting at the cwd :: `@/my/path/from/the/current/directory`
 a - b :: Remove the last occurence of b from a
 a ^ n :: Go back `n` directories from `a`
 n ^ a :: Go back `n` directories from `a`
+ @a :: (unary) prepends the current working directory to `a`
+ ~a :: (unary) prepends the home directory to `a`
+| `//`
 
+| regexes
+| 
+[horizontal]
+`^$`-delimited expression :: `^[0-9*]+$`
+flags :: `^\w+$\|i`
+expression without `^$` :: `%[0-9]%`
+
+|
+[horizontal]
+a + b :: Appends patterns like strings
+a \|\| b :: Returns `"(?:$a)\|(?:$b)"`
+a ~= b :: Checks if `a` matches the pattern `b` (or inverse if `b` is not a pattern)
+a >< b :: 
+| `^$`
+
+|===
+
+=== Syntax shortcuts
+Unlike operators, syntax shortcuts have no whitespace around them.
+[cols="1,2,4a"]
+|===
+| Syntax
+| Name
+| Same as...
+
+| +a->b+
+| Mutation call
+| `a = a.b`
+
+| +a-->b+
+| Functionnal assignement call
+| `a = b(a)`
+
+| :a
+| Automorphic key-value pair
+| `a: a`
 |===
 
 === Collections
@@ -120,11 +165,17 @@ OOP is approched diffrently:
 * Each map's _item_ holds his position in the map with an _index_. In the special case of "arrays" or "lists", _indexes_ and _keys_ are equivalent, but they're not to be confused.
 
 ==== Declaration 
-Declaration is made using the following syntax `[index: key: value]` or `[key: value]`:
+[horizontal]
+pairs :: `index: key: value`, `key: value` or simply `value`. 
+pairs separator :: a newline, a comma `,` or both
 ```
 my_map = [
   lorem: "ipsum"
   dolor: "sit amet."
+]
+
+my_list = [
+  "ispum", "dolor", "sit amet"
 ]
 ```
 
@@ -172,8 +223,16 @@ See <<Built-ins>> for more operations
 | `item >> map`
 |
 
+| Inserting at index/key
+| `map.insert item, at: index` or `map.insert item, key: key`
+| 
+
+| Zipping keys & values
+| `keys >< values`
+| Returns a new map, using `keys` 's values as keys, and `values` 's values as values
+
 | Removing the first/last item(s)
-| `map->remove first: n` (remove the first `n` items) or `map->remove\|first`. Same with the `last` argument/flag.
+| `+map -> remove first: n+` (remove the first `n` items) or `+map -> remove\|first+`. Same with the `last` argument/flag.
 | 
 
 | Removing item(s) by key/index
@@ -198,7 +257,7 @@ my_map -= ['a', 'c']
 ]
 ----
 
-my_map->remove 3 \| by_index
+my_map -> remove 3 \| by_index
 
 ----
 [
@@ -208,7 +267,7 @@ my_map->remove 3 \| by_index
 ```
 
 | Switching indexes
-| ``map -> move key to: destination_index``
+| `+map -> move key to: destination_index+`
 |
 ```
 my_map = [
@@ -217,7 +276,7 @@ my_map = [
   c: 0
 ]
 
-my_map->move a to: 1
+my_map -> move a to: 1
 ----
 [
   b: 4
@@ -232,12 +291,22 @@ my_map->move a to: 1
 === Declaring variables
 `=` is used to both declare and assign values to names (making that name a defined variable)
 
+.Valid variable names
+* Start with
+** _ (underscore)
+** Alphanumeric characters (including UTF-8 characters)
+* Contain either
+** _ (underscore)
+** alphanumeric characters (including UTF-8 characters)
+** - (dash)
+* Cannot finish with a dash "-"
+
 The variable's type can be explicitly set, or is infered when not specified:
 ```
-number my_number = 2.485
-string my_string = 2.485 — returns "2.485"
-my_variable = 2.485
-my_variable is a number — returns yes
+number my-number = 2.485
+string my-string = 2.485 --- returns "2.485"
+my-variable = 2.485
+my-variable is a number --- returns yes
 ```
 
 Once a variable is declared, its type cannot be changed. This behavior may be altered using the `hybrid` keyword, as such:
@@ -245,6 +314,13 @@ Once a variable is declared, its type cannot be changed. This behavior may be al
 ```
 hybrid var_name = 42
 var_name = "it works"
+```
+
+You can also declare constants--variables whose values cannot be changed--using the `constant` keyword:
+
+```
+constant THE_FINAL_ANSWER = 42
+THE_FINAL_ANSWER = 43 --- fail cause: cannot update a constant's value
 ```
 
 == Operators
@@ -287,7 +363,7 @@ Due to a high chance of ambiguity with other declarations, *all binary operators
 | ----\n ... \n---- (four dashes, a new line, your comment, a new line, four dashes.) cannot contain `----`
 |===
 
-== Docstrings
+=== Docstrings
 
 To document a function or method, use the following format:
 
@@ -332,7 +408,7 @@ URL to the source code (a online repo most of the time)
 
 Of course, `ARGUMENTS`, `OPTIONS`, `RETURNS`, `SOURCE` and--but not recommended—`LICENSE` may be omitted when not applicable.
 
-=== Examples
+==== Examples
 
 ```
 ====
@@ -369,7 +445,7 @@ modules| (enforces) string or path  | ""      | The module(s) to import `whats` 
 RETURNS
 []any | A map of imported modules, in import order.
 ----
-use = map of strings whats, string or path module = "" ==> {
+use = map of strings whats, string or path module: "" ==> {
   if not whats.strip
     fail cause: 'Nothing to import'
          troubleshoot: "Please `use` at least one module or object"
@@ -378,8 +454,8 @@ use = map of strings whats, string or path module = "" ==> {
   else
     resolve_globs = map of strings values ==> iterate over values { glob.find value or value }
     
-    modules-->resolve_globs
-    whats-->resolve_globs
+    modules --> resolve_globs
+    whats --> resolve_globs
 
     imported = []
     iterate over modules with module=value
@@ -432,7 +508,7 @@ boolean
 odd = |zero_is_even ==> if zero_is_even and this == 0 then no else this.modulo 2 != 0
 ```
 
-== modules
+== Modules
 === Creation
 When you put a `module` declaration at the top of your file, any top-level key-value pair declaration will be exported, such that `key: value` will be accessible as `module_name.key` when using the module in a file. regular `=` assignements will not be accessible outside of the module's file. You can--of course--use the methods of a module in itself, 
 
@@ -463,6 +539,141 @@ use map_* from ~/components
 
 (this is actually syntax sugar for the method `core.use`)
 
-== Nested iterate loops
+== Control structures
+=== Syntactic sugar for...
+Control structures are syntactic sugar for `core` functions that take an argument and a block or function.
+
+eg. writing 
+```
+if my_conditional
+  my_function_call()
+  some_variable = some_value
+```
+gets interpreted as
+```
+core.if my_conditional, {
+  my_function_call()
+  some_variable = some_value
+}.bind_to_outer_scope()
+```
+The `.bind_to_outer_scope()` binds the created block to its parent scope, preventing to create a new scope for the control structure's body implicitly.
+
+Some `core` functions return a value, which means that you can assign the result of a control structure to a variable, pretty useful for eg. `when` statements.
+
+=== As modifiers
+
+*All* control structures can be written as a statement modifier, using the statement as the action:
+
+```
+log value if value > 5
+```
+
+is the same as
+
+```
+if value > 5
+  log value
+```
+
+=== Conditionals
+
+==== `if`/`unless`, `else if`, `else`
+
+
+
+=== Loops
+
+.All loops...
+- Can be modified with an modifier-style `if` or `unless` statement. (except `while`)
+- Return a map containing, in order of iteration, the returned values. (as in functions, the last statement is used as the return value)
+
+Here is an example illustrating the two above points:
+```
+nums = 
+  repeat 10 times with index: n if n.even
+    n² --- some unicode works, ² gets transformed to `^2`
+
+log nums
+----
+nums = [
+  0: 0
+  1: 4
+  2: 16
+  3: 36
+  4: 64
+  5: 100
+]
+----
+```
+
+==== `iterate`
+There is no `for` loop. Instead, a `iterate` (or `iterate over`) loop is used. It loops through the given map, setting `value`, `index` and `key` variable accessible inside the loop's body.
+
+===== Nested iterate loops
 
 In a nested iterate loop, the variable `outer` is automatically created for each inner loop, and gives access to the index, value and key of the parent loop, and possibly another `outer` item that is a map containing the parent loop of the parent loop's index, value, key and possibly an `outer` item, and this until we reach the outermost loop.
+
+===== Renaming the automatically set variables
+
+You can also change the name of the automatically set variables, using `with`:
+
+```
+iterate over my_map with key: uuid, value: person
+  log value --- fail cause: undefined variable
+  log person --- works.
+  iterate over person
+    log key --- keys of the current `person` object.
+    outer.key == outer.uuid --- true
+    outer.outer --- nothing
+```
+
+This is useful in situations with deeply nested loops.
+
+==== `repeat`
+To execute some code _n_ times, use `repeat n` or `repeat n times`.
+
+==== `while`/`until`
+To execute some code over until a condition is false, use `while`.
+Prefer `until` to `while not ...`
+
+== Enforced project structure
+
+When the project's directory contains more than one {proglang} file, the following is assumed:
+
+- One file equals one class. All files are classes, and functions & methods defined in that class are members of the class, whose name is made from the file's name.
+- _run.pg_ is the entry point file. This is the only file which is not a class. A project does not need to have a _run.pg_ file. _run.pg_ has access to special keywords, which are defined in the `cli` module, to easily describe CLIs. This module is silently imported like `core`, only for this file.
+- Files whose name start with `__` ignores this convention, and are treated as regular .pg files.
+
+NOTE: Class name == module name == the file's name without the extension.
+
+Example structure for the built-in libary:
+
+```
+proglang
+|__ core.pg  # Keywords
+|__ bin # Compiled files go there. As a result, a class cannot be named `bin`
+|__ date  # Date type. All the sub classes are accessible as date.(subclass name)
+|   |__ date.pg      # Main class
+|   |__ datetime.pg  # Datetime sub class
+|   |__ duration.pg  # Duration sub class
+|   |__ time.pg      # Time sub class
+|
+|__ map.pg # Map type
+|__ number.pg # Number type
+|__ path.pg # Path type
+|__ regex.pg # Regular expressions type
+|__ run.pg  # Executes some given code
+|__ color.pg # Color type
+|__ markup_languages
+|   |__ html.pg
+|   |__ json.pg
+|   |__ toml.pg
+|   |__ yaml.pg
+|   |__ markdown.pg
+|   |__ asciidoc.pg
+|
+|__ io.pg
+|__ cli.pg
+|__ 
+
+```
