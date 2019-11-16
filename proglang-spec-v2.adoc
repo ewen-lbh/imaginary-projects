@@ -63,8 +63,6 @@ NOTE: The modulo `%` does not exist, but the methods `.modulo n`, `.every n`, `.
 a +**+ b or a ^ b :: `a * a repeat b times`
  %a :: `"${a * 100}%"`
  #a :: Converts an hexadecimal number to decimal (used for `color` 's literal syntax)
- ++a :: Increments a
- --a :: Decrements a
 | `0`
 
 | dates
@@ -135,28 +133,46 @@ a >< b ::
 |===
 
 === Syntax shortcuts
-Unlike operators, syntax shortcuts have no whitespace around them.
-[cols="1,2,4a"]
+Whitespace shown here is mandatory (no whitespace = does not allow whitespace around, whitespace = whitespace is required)
+[cols="1,2,4a,4a"]
 |===
 | Syntax
 | Name
 | Same as...
+| Example use case
 
 | +a->b+
 | Mutation call
-| `a = a.b`
+| `a = a.b` (`b` can be an operator)
+| Switching a boolean variable `+turned-on->!+`
 
 | +a b= c+
-| Operator mutation call
-| `a = a b c` (where `c` is an operator, like `not` or `+`)
+| Binary operator mutation
+| `a = a b c` (where `c` is a *binary* operator, like `§` or `+`)
+| Decrementing `a -= 5`
+
+| a++
+| Incrementation
+| `a += 1`
+| 
 
 | +a-->b+
 | Functionnal assignement call
-| `a = b(a)`
+| `a = b(a)` (a can be a map of functions)
+| Applying one function to a bunch of variables
+```
+[a, b, c, d, e]-->send_to_server
+```
 
 | :a
 | Automorphic key-value pair
 | `a: a`
+| Passing a named argument to a function when the variable's name is the same as the function's argument name
+```
+extract [age, name] from persons.first
+
+render_hydration_class_factory HTML, SAFEST, corrupt_levels: 4, :age, :name
+```
 |===
 
 === Collections
