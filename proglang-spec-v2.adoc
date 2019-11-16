@@ -134,35 +134,45 @@ a >< b ::
 
 === Syntax shortcuts
 Whitespace shown here is mandatory (no whitespace = does not allow whitespace around, whitespace = whitespace is required)
-[cols="1,2,4a,4a"]
+[cols="3,1,4a,4a"]
 |===
 | Syntax
 | Name
 | Same as...
 | Example use case
 
-| +a->b+
+| `+a->b+`
 | Mutation call
 | `a = a.b` (`b` can be an operator)
 | Switching a boolean variable `+turned-on->!+`
 
-| +a b= c+
+| `+a b= c+`
 | Binary operator mutation
 | `a = a b c` (where `c` is a *binary* operator, like `§` or `+`)
 | Decrementing `a -= 5`
 
-| a++
+| `a++`
 | Incrementation
 | `a += 1`
 | 
 
-| +a-->b+
+| `+a-->b+`
 | Functionnal assignement call
 | `a = b(a)` (a can be a map of functions)
 | Applying one function to a bunch of variables
 ```
 [a, b, c, d, e]-->send_to_server
 ```
+
+| `extract [a: b, c, d] from e`
+| Variables extraction
+|
+```
+a = e.b
+c = e.c
+d = e.d
+```
+| 
 
 | :a
 | Automorphic key-value pair
