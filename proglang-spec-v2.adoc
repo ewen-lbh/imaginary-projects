@@ -2,6 +2,8 @@
 Ewen Le Bihan
 v2
 
+//TODO: use ... from ... ==> same syntax as `extract`, but map's brackets not required (also in extract no brackets required)
+
 == Types
 This languages offers a lot of different types by default (even colors!) and special litterals to declare each of them. But this can be a disadvantage, as not all types can have their own logical litterals.
 Here is a table listing all the built-in types.
@@ -167,6 +169,7 @@ Whitespace shown here is mandatory (no whitespace = does not allow whitespace ar
 | `extract [a: b, c, d] from e`
 | Variables extraction
 |
+You can also use glob patterns, much like modules importing
 ```
 a = e.b
 c = e.c
