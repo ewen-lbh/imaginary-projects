@@ -63,6 +63,8 @@ NOTE: The modulo `%` does not exist, but the methods `.modulo n`, `.every n`, `.
 a +**+ b or a ^ b :: `a * a repeat b times`
  %a :: `"${a * 100}%"`
  #a :: Converts an hexadecimal number to decimal (used for `color` 's literal syntax)
+ ++a :: Increments a
+ --a :: Decrements a
 | `0`
 
 | dates
@@ -144,6 +146,10 @@ Unlike operators, syntax shortcuts have no whitespace around them.
 | Mutation call
 | `a = a.b`
 
+| +a b= c+
+| Operator mutation call
+| `a = a b c` (where `c` is an operator, like `not` or `+`)
+
 | +a-->b+
 | Functionnal assignement call
 | `a = b(a)`
@@ -166,7 +172,7 @@ OOP is approched diffrently:
 
 ==== Declaration 
 [horizontal]
-pairs :: `index: key: value`, `key: value` or simply `value`. 
+pairs :: `key: value` or simply `value`. 
 pairs separator :: a newline, a comma `,` or both
 ```
 my_map = [
@@ -179,6 +185,25 @@ my_list = [
 ]
 ```
 
+Since this is syntactic sugar for setting the map's items one at a time, you _can_ use a value of the map previously defined: 
+
+```
+my_map = [
+  lorem: "ipsum"
+  dolor: "§test sit amet." § [test: my_map.lorem] --- works!
+  "thing" --- when the key is not specified, the index is used
+]
+
+----
+is the same as
+----
+
+map my_map
+my_map.lorem = "ipsum"
+my_map.dolor = "§test sit amet." § [test: my_map.lorem]
+my_map.2 = "thing"
+```
+
 ==== Lookup
 * Lookup by index is made with the `.nth` method (that you can--like everything in this language--override) 
 ** `my_map.nth 4` gives the fifth item of the map
@@ -189,6 +214,7 @@ my_list = [
 ** Numbers: `my_map.0`
 ** Variables: `my_map.$variable_name`
 ** Computed values: `my_map.${my expression}`
+* Getting the map's size: `my_map.size` or `#my_map`
 
 ==== Iteration
 The `iterate` keyword is used:
@@ -348,7 +374,7 @@ Any character or sequence of characters can serve as a key name (and thus as an 
 
 Obviously, using one of the sequences used by comments is impossible too
 
-Due to a high chance of ambiguity with other declarations, *all binary operators must be called with spaces surrounding the operator*
+Due to a high chance of ambiguity with other declarations (especially literals), *all binary operators must be called with at spaces surrounding the operator*, and *all unary operators must be called with at least one space before the operator, and no space after the operator*
 
 == Comments
 
@@ -577,8 +603,36 @@ if value > 5
 
 === Conditionals
 
-==== `if`/`unless`, `else if`, `else`
+Returns the last executed statement's return value
 
+==== `if`/`unless`, `else if`, `else`
+Works as expected.
+
+==== `when`
+A switch-case statement.
+
+- Use a newline + indent or `: ` to separate condition and body.
+- The conditional for each condition is constructed with the part after `when`
+- Only the first matched condition is executed, except when a `fallthrough` keyword is found.
+- Can be chained with `else` or `else if`
+
+
+```
+when a <
+  = 0: "Are you f'ing kiddin' me?" --- computes `a <= 0`
+  7
+    do_something()
+    nothing
+  8
+    "You are under 8."
+    fallthrough
+  = 18
+    "You cannot drink alcohol"
+else if (a as a string).0 == "6" and (a as a string).1 == "9"
+  "Noice"
+else
+  "Impossible. Perhaps the archives are incomplete."
+```
 
 
 === Loops
@@ -676,4 +730,26 @@ proglang
 |__ cli.pg
 |__ 
 
+```
+
+
+```
+iterate over my_map with value=example if condition
+  do_stuff(example)
+
+--- same as
+
+{
+  --- initialization
+  number index
+  hybrid example --- would've been 'value' without the `with` part
+  hybrid key
+
+  --- statement
+  while index < #my_map
+    --- `if` part
+    if condition
+      --- actions
+      do_stuff(example)
+}
 ```
