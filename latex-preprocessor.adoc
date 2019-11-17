@@ -48,7 +48,7 @@ Lorem ipsum dolor sit amet.
 ```
 @equation*
   @split
-    pH &= -log[ H3O+ ]
+    pH &= -log [H3O+]
        &= "p"K_a + log( [A-]_"éq" / [HA]_"éq" )
 Outside the environements.
 @itemize
@@ -84,4 +84,45 @@ Outside the environements.
 | `\command[options]{content}`
 |
 
+| `= section content`
+| `\section{section content}`
+|
+
+| `== section content`
+| `\subsection{section content}`
+|
+
+| `=== section content`
+| `\subsubsection{section content}`
+|
+
+| `==== section content`
+| `\subsubsubsection{section content}`
+|
+
 |===
+
+== Math mode
+=== Symbols
+
+[horizontal]
+Write :: Get
+`α` :: `\alpha` (works with all greek letters)
+`÷` :: `\div`
+`ab/cd` :: `a\frac{b}{c}d`
+`e ab / cdf` :: `e\frac{ab}{cdf}`
+`*` :: `\cdot` or `\times` (depending on compiler locale & options)
+`**` :: `\ast`
+`%` :: `\percentage`
+`×` :: `\times`
+`∨` :: `\land`
+`∧` :: `\lor`
+`⇒` :: `\implies`
+`⇐` :: `\impliedby`
+`⇔` :: `\iff`
+`→` :: `\to`
+`←` :: `\from`
+`∈` :: `\in`
+`∀` :: `\forall`
+`log` :: `\log` (works with all functions)
+`+|->+` :: `\mapsto`
