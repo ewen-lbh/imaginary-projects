@@ -1,0 +1,517 @@
+# The RESTLang language
+
+## Structure
+
+Each file represents a single resource.
+The files are structure into three sections, two of which are optional.
+
+All of those files inherit model fields, schema fields and views from the `base.rest` file[^1]
+
+[^1]: A way to get around this will be available soon
+
+### Models
+
+This section is required. It describes the database model of the resource, ie. which fields are stored into the db.
+
+A field declaration follows the following format:
+
+```
+<type> <field name>
+	<properties>
+```
+
+Where `<type>` is a <<field-types,field type>>, `<field_name>` is the field's name and `<properties>` a comma-separated list of property declarations.
+
+A property declaration follows the following format:
+
+```
+<property> [<"with" | "from" | "as" | "is" | "a" | "="> <value>],
+```
+
+Where `<property>` is a <<field-properties,field property>>, and `<value>` the property's value.
+
+Note that if you leave out the value, and only declare the property name, it will be as if you assigned this property the boolean `true`, ie. `generate automatically,` is the same as `generate automatically = true,`.
+
+### Model events
+
+You can hook into several events from the model and run python code.
+
+The format is the following:
+
+```py
+@<event>
+	<python code>
+```
+
+Where `<event>` is one of:
+
+[horizontal]
+updated :: When the model gets updated
+created :: When the model is created
+deleted :: When the model gets deleted
+
+You can run the same code for multiple events, by stacking them:
+
+```py
+@updated
+@created
+	# run some code
+```
+
+Similarily to <<Code in views,views>>, this code will receive several commodity variables prefixed by `$`.
+
+$new ::
+	The new object that will be inserted in place of the current one.
+	For the `created` or `deleted` events, this is the same as $current but is the value that will be used  when calling `super`.
+$current ::
+	The current object, before any updating applied. For `created`, this is the object after its creation.
+$now ::
+	Shortcut for `datetime.datetime.now`.
+
+#### Imports
+
+See <<Code in views>>, the same modules are imported.
+
+### Computed properties
+If you put parentheses after the field name, its defined with a function and the `@property` decorator is added (except for `pass:[__str__]`).
+
+.Example
+```python
+String __str__()
+	return f"{$fields.subject}: {$fields.name or '<Untitled>'}"
+```
+
+The `$fields` variable contains an object whose properties are the fields' values.
+
+## Schemas
+
+Schemas represent differences between the model the API shows and receives data from, and the model.
+
+The schema is filled with the Model's fields (except fields with `hide = true`), and those can be overriden by simply re-declaring them.
+
+This is also useful for adding computed attributes, eg. HTTP links to other resources.
+
+You can think of schemas as the rough equivalent of django-rest-framework's serializers, but it's less boilerplate: relational fields automatically have a nested representation for responses and lookup field values for request bodies.
+
+## Views
+
+Views bind URLs to responses, which are constructed from the schema.
+
+Declare views using the following format:
+
+```
+<documentation>
+<http method> <path>
+	[<param declarations>
+	---]
+	<code>
+```
+
+Where `<documentation>` is a rich-text (markdown inline-level constructs such as *bold* or _italic_ are allowed) description of what this view does, but does _not_ explain path parameters or query parameters, `<http method>` a standard HTTP method and `<code>` some code in python (see <<code-in-views)) which should `return` a `response` object containing an object (dict for python,code in views>> or an array of objects.
+The separator (`---`) can have more dashes with a minimum of 3.
+
+As for `<param declarations>` is a newline-separated list of <<url-parameters,url parameter declaration>>
+
+By default, the views are filled with the following:
+
+```py
+GET /<resource>/
+	List ?sorted
+		Sort the response according a comma-separated list of fields
+	String ?search
+		Searches for matches in <list of searchable fields> fields.
+	-----------------------------------------------------------------
+	$result = $objects.all()
+	for sort_field in $params.sorted:
+		if sort_field not in $fields.names:
+			raise Http401(f"{sort_field} is not a valid field. Valid fields: {','.join($fields.names)}")
+			$result = $result.order_by(sort_field)
+
+	if $params.search:
+		for field in $fields.searchable:
+			$result = $result.filter(**{f'{field}__like': query_params.search})
+
+GET /<resource>/:lookup
+    $result = $objects.get(<lookup field name>=$params.lookup)
+```
+
+### Overriding a view while inheriting from the defaults
+
+To redefine a view but still benefit from the defaults or from the `base.rest`:
+
+```ts
+>inherit <"defaults" | "base">
+<view-declaration>
+```
+
+Note that the inherited code will run _before_ the additional code, and the $result will thus be set accordingly.
+
+## Code in views
+Django's ORM is used as a backend for interacting with the database. This means that python code included in views will run in a Django environment.
+
+### Error handling
+When django raises errors, those can be correlated to certain status codes, which are handled for you:
+
+[%header, cols=2*]
+|===
+| Exception | Generates
+| FieldDoesNotExist | 400 Bad Request
+| ObjectDoesNotExist | 404 Not Found
+|===
+
+All others uncaught exceptions will generate a `500 Server Error` response.
+
+Of course, you can handle exceptions yourself and raise an `Http<status code>` exception (replace `<status code>` with the status code, eg. 404).
+
+A shortcut syntax (which isn't valid Python but is replaced early) for raising status codes is `respond with <status code> "<error message>"`, which will translate to `raise Http<status code>("<eror message>")`
+
+### Imports
+Some modules are automatically imported:
+
+* datetime
+* re
+* All of the other models (See <<accessing-other-models>>)
+
+### $-Variables
+
+Some variables are automatically created, and are all prefixed by `$`:
+
+$objects ::
+    Alias of `<Model>.objects`, with `<Model>` the current resource's model.
+
+$params ::
+    Object where each property is a <<url-parameters,url parameter>>.
+
+$result ::
+    This variable must be created and will be used to return the response.
+
+$fields.fields ::
+    The schema's fields as objects
+$fields.names ::
+    The schema's fields' names, as a list of strings
+$fields.searchable ::
+    Shortcut for `[ f for f in $fields.fields if f.searchable ]`
+
+### Accessing other models
+Other models are automatically imported if used.
+Just use their names as you would do with regular django, eg. `MyOtherModel.objects.all()`
+
+
+## Field types
+
+The fields (either in the <<models,Model section>> or the <<schemas,Schema section>> are typed, and can be one of the following types:
+
+[%header, cols=3*]
+|===
+| Type
+| Django field equivalent
+| Additionnal notes
+
+| UUID
+| UUIDField
+| Defaults to `uuid.uuid4()` when the property `autogenerate` is true.
+
+| String
+| CharField or TextField
+| If no `max length` property is set, this is translated into a `TextField`. Else, into a `CharField`.
+
+| Int, Integer
+| IntegerField
+|
+
+| Float
+| FloatField
+|
+
+| URL
+| URLField
+| 
+
+| Binary
+| BinaryField
+|
+
+| Boolean
+| BooleanField
+|
+
+| Datetime
+| DateTimeField
+|
+
+| Date
+| DateField
+| 
+
+| Time
+| TimeField
+| 
+
+| Duration
+| DurationField
+| 
+
+| Email
+| EmailField
+| 
+
+| File
+| FileField
+| 
+
+| Filepath
+| FilePathField
+| 
+
+| IPAddress
+| GenericIPAddressField
+| 
+
+| Slug
+| SlugField
+|
+|===
+
+## Relational fields
+
+To make a relation to another resouce, use <ResourceName> for the type. (with angle brackets _included_), eg. if you file's name is `my-model-event`, use `<MyModelEvent>`.
+
+Include a `relation` property.
+Consider the following file, `my-other-resource.rest`, where this field declaration represents a OneToMany relationship with `my-model-event`. (A MyOtherResouce can have multiple MyModelEvent's)
+
+```
+<MyModelEvent> events
+	relation = my-other-resource has many events
+```
+
+The declaration has the following format:
+
+```
+<Other> <field_name>
+	relation = <other> has <"one" | "many"> <field_name>
+```
+
+Where `<other>` is the referenced resource's kebab-case name, and `<Other>` its PascalCase name.
+
+NOTE: Relational fields must be included in _both_ models, as this makes reading the source code clearer. To do a ManyToMany relationship, use "many" in both models.
+
+## URL Parameters
+
+Parameters come in two forms in URLs: _query parameters_, eg. `http://example.com/my-url?MY_PARAMETER_NAME`, and _path parameters_, eg. `http://example.com/:MY_PARAMETER_NAME`.
+
+In Python functions, _path parameters_ would be _positional arguments_, and _query paramters_ _keyword arguments_.
+
+In RESTLang, those parameters are both defined with a name, a type, a default value and some documentation.
+
+The format is as follows:
+
+```
+<type> [?]<name> [= <default value>]
+	<documentation>
+```
+
+An optional `?` can be put in front of the name to clarify that the parameter is a query parameter, but does not change anything.
+
+Since _path parameters_ are positional, we must include them in the url declaration. These are defined by prepending a word in the path with `:`, following the community-accepted convention used by all REST APIs documentations.
+
+Thus, if declared parameters have no corresponding name in the URL declaration, the parameter is treated as a _query parameter_, *even if the name is prepended with "?"*.
+
+Here's a example:
+
+```
+GET /courses/:start/:end
+	Date | DateTime start
+		The selected date range's lower bound.
+	Date | DateTime ?end
+		The selected date range's upper bound.
+	String[]  week_types = Q1,Q2,BOTH
+		Filter events based on their week types. Allowed values: Q1, Q2, BOTH.
+	String[] ?include = added,rescheduled
+		Decide which types of mutation-affected events to include in the response. Allowed values: added, rescheduled, deleted, offdays.
+```
+
+Here, `end` is a _path_ parameter, even though there's a `?` in front. The same goes for `week_types`, which is a _query_ parameter event without a `?`.
+
+The linter will fail with an error if a _query_ parameter as no `?` in front, to prevent typos between the URL and the parameter declaration.
+
+### List type
+In URL parameters, types  can be declared like `Type[]`: this means that the parameter accepts a comma-separated list of `Type`pass:[s] (delimiter configurable, see <<Configuring>>)
+
+### Default values
+Default values are always strings, its what would have been passed if the parameter was present, not what you'll receive in the code.
+
+### Optional path parameters
+Only the _last_ path parameter (in the URL's order) can have a default value.
+
+## Field properties
+
+### Field properties that compile to other django field types
+
+For cleaner code and less types, some django fields are used with  a `type` property, eg. a `File` field with `type = image` will use an `ImageField`.
+Field properties' names are not case sensitive.
+
+[%header, cols=3]
+|===
+| Field type
+| Compiles to
+| When
+
+.3+| File
+.3+| ImageField
+
+| type = image
+| mime = image/*
+| extension = (an image extension like .png or .jpeg)
+
+| String
+| TextField
+| max length is not specified
+
+| Integer
+| PositiveIntegerField
+| postive = true
+
+| Integer
+| SmallPositiveInteger
+| max ∈ [0, 32767]
+
+| Integer
+| SmallInteger
+| max ∈ [-32768, 32767]
+
+| Date
+| DateTimeField
+| include time = true
+
+| Float
+| DecimalField
+| max digits ≥ 0 *and* decimal places ≤ max digits
+|===
+
+### Django properties
+
+Django's field arguments have equivalents as properties.
+
+[%header, cols=2]
+|===
+| Django |  equivalent property
+
+| blank=True, null=True | optional = true
+| choices														 | allowed valuesfootnote:[Use a markdown list of values, indented and on a new line after the "="]
+| help_text													| help
+| editable=False							| readonly = truefootnote:[Readonly in schemas is not the same: in schemas, POST request will ignore readonly values. Here, it directly translates to django's `editable` (see https://docs.djangoproject.com/fr/3.0/ref/models/fields/#editable).]
+.2+| auto_now_addfootnote:[If readonly = false, use default=date.today (for DateFields), datetime.now() (for DateFields) and datetime.now.time() (for TimeFields)]							| default to now
+																							| default = now
+| auto_now									 | update with now
+| height=<h>, width=<w> | size = <w>[ ]<"by", "x", "×">[ ]<h>
+|===
+
+These properties can be directly used, with their underscores replaced by spaces:
+
+* default
+* null
+* blank
+* db_column
+* db_index
+* db_tablespace
+* default
+* error_messages
+* max_length
+* allow_unicode
+* upload_to
+* path
+* match
+* recursive
+* allow_files
+* allow_folders
+* height
+* width
+* protocol
+* unpack_ipv4
+
+### Validators
+
+Some properties compile to validators:
+
+[%header, cols=2*]
+|===
+| Property/ies
+| Compile(s) to
+
+| matches regex, regex
+| RegexValidator
+
+| min, minimum
+| MinValueValidator
+
+| max, maximum
+| MaxValueValidator
+
+| min length, minimum length
+| MinLengthValidator
+
+| max length, maximum length
+| MaxLengthValidator
+
+| extension
+| FileExtensionValidator
+
+| no null characters
+| ProhibitNullCharactersValidator
+|===
+
+For custom validators, see <<Custom validation>>
+
+### Unique together
+
+When multiple fields should be unique when considered together, use:
+
+```
+unique together with <field name> [, <field name> ...]
+```
+
+Where `<field name>` can be a dotted path.
+eg.
+
+```
+<User> user
+	relation = User has many user
+Slug name_slug
+	unique together with user.id
+```
+
+Means that this resource's `name_slug` must be unique with its user's `id` field.
+
+
+## Custom validation
+
+For custom validation, create a python file `custom_validators.py` or `validators.py`. All functions with their names starting with `validate_` will be usable as validaors for the `validate` property. Inside this property, functions can be referenced without their  `validate_` prefix.
+
+.custom_validators.py
+```python
+from random import randint
+from django.core.exceptions import ValidationError
+
+def validate_lucky(value):
+	if randint(1, 666) % 2 == 0:
+		raise ValidationError("Try again")
+```
+
+.roulette.restapi
+```ts
+// ...
+Integer guess
+	validate lucky
+// ...
+```
+
+## Configuring
+
+Configurations are made in a simple `config.yaml` file.
+
+Here's the default config file:
+
+.config.yaml
+```yaml
+linkify relational fields: yes
+```

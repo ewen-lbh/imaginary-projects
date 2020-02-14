@@ -1,0 +1,49 @@
+== Map methods
+
+[cols="3,3,2a"]
+|===
+| Method signature
+| Explanation
+| Notes
+
+| `.deduplicate(\|!values, keys)`
+| Deduplicates the map, based on values, keys or both
+| If both flags are set to off, the original map is returned
+
+| `.+(map other)`
+| Merges the map with `other`
+|
+
+| `.-(map other)`
+| Removes the keys from `other`
+| 
+
+| `.*(number n)`
+| Duplicates the items inside the map `n` times.
+|
+
+| `.§(func or block (index, key, value) transformer)`
+| Applies `transformer` with arguments `index`, `key` and `value` to each value of the map
+| 
+
+| `.?(func or block (index, key, value) filterer)`
+| Calls `filterer`  with arguments `index`, `key` and `value` and keep only elements that resulted in `filterer` returning `yes`
+|
+
+| `.index_of(string key?, any value?)`
+| Returns the index of the element with the corresponding key and/or value
+|
+
+| `.key_of(num index?, any value?)`
+| Returns the key of the element with the corresponding index and/or value
+|
+
+| `.sort(func or block (a, b) sorter?)`
+| Sorts the map by modifying the index. If `sorter` returns `true`, switches the index of `a` and `b`. Else, keep the same indexes.
+|
+
+| `.as_json(any fallback_with="<func>")`
+| Returns a string containing the JSON representation of 
+
+
+|===
