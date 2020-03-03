@@ -1,0 +1,64 @@
+[model]
+
+<Subject> subject
+      relation = Subject has many Note
+String format
+      allowed values =
+            - markdown
+            - asciidoc
+            - studentml
+            - html
+            - link
+Datetime opened
+      optional,
+      update with now
+Datetime modified
+      optional
+String content
+      optional
+@updated
+      if $new.content != $current.content:
+            $new.modified = $now
+@updated
+@created
+      import bleach
+      from config import (
+            ALLOWED_HTML_ATTRS, 
+            ALLOWED_HTML_STYLES, 
+            ALLOWED_HTML_TAGS
+      )
+      if $current.format == 'HTML':
+            $new.content = bleach.clean(
+                  $current.content,
+                  tags=ALLOWED_HTML_TAGS,
+                  attributes=ALLOWED_HTML_ATTRS,
+                  styles={
+                        'span': ALLOWED_HTML_STYLES,
+                        'class': ALLOWED_HTML_STYLES
+                  }
+            )
+String __str__()
+      return f"{$fields.subject}: {$fields.name or '<Untitled>'}"
+
+[settings]
+
+page size = 20
+paginate with = responses, headers
+
+[views]
+
+GET /notes/convert/:uuid/:format
+GET /notes/convert/:from_format/:to_format
+      ...
+
+>inherit base
+GET /notes/
+      String[] ?subjects
+            Filter notes by subject
+      --------------
+      subject_uuids = [ s.uuid for s in $user.subjects.all() ]
+      for subject in $params.subject:
+            if subject not in subject_uuids:
+                  respond with 400 f"There is no subject with uuid {$params.subjects}"
+            $result = $result.filter(subject__uuid=subject)
+

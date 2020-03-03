@@ -103,6 +103,9 @@ Sommaire
         3.8.2 Langages de programmation
         3.8.3 Langages de description
 4. Musique assistée par ordinateur
+9. Linguistique
+    9.1. Systèmes de langues
+    9.2. Une langue parfaite
 6. Graphisme
     6.1. Compositing
     6.2. Design vectoriel

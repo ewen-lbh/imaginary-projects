@@ -1,0 +1,13 @@
+# Model
+UUID uuid
+  primary key,
+  readonly,
+Date added
+  include time,
+  default to now
+Date modified
+  include time,
+  default to now,
+  update with now,
+<User> user
+  relation = user has many,

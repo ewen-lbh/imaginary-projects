@@ -34,21 +34,20 @@ NOTE: `and`, `or` and `not` are reserved to booleans and always try to convert t
 [horizontal]
 with interpolation :: `"a string"` or \``a string``
 without interpolation :: `'a litteral string'`
-multiline (w/ interpolation):: `{" my string
-and i can put newlines in it "}`
-multiline (w/o interpolation) :: `{' my literal string
+multiline (w/ interpolation):: `"my string
+and i can put newlines in it"`
+multiline (w/o interpolation) :: `' my literal string
 that doesn't have any sort 
 of interpolation
 whatsoever.
-'}`
+'`
 |
 [horizontal]
 + :: Append to string
 * :: Repeats the string
 - :: Remove all occurences of substring from string
 $ :: (written inside the quotes) interpolates the variables into the string (``` or `"`-quotes only)
-§ or % :: percent-formatting, like Python's
-# :: (unary) returns the string's length
+§ or % :: percent-formatting, like Python's (use `%value` for the `%` operator and `§value` for the `§` operator)
 | `""`
 
 | numbers
@@ -56,6 +55,9 @@ $ :: (written inside the quotes) interpolates the variables into the string (```
 [horizontal]
 integer :: `42`
 floating-point :: `6.9`
+hexadecimal :: `0xACF139`
+binary :: `0b1101001010`
+octal :: `0o17265368`
 |
 +, -, /, *, <, >, >=, pass:[<=] and == act like you would expect
 
@@ -90,8 +92,8 @@ a ~ b :: Checks if `a` is `b`. `b` can be: `date`, `datetime`, `time` or `durati
 | colors
 |
 [horizontal]
-hexadecimal :: `#268cce as a color`
-hexadecimal, short :: `#fff == #ffffff`
+hexadecimal :: `0x268CCE`
+hexadecimal, short :: `0xFFF == 0xFFFFFF`
 css color name :: `"blue" as a color` or `〈color blue〉`
 |
 [horizontal]
@@ -99,7 +101,7 @@ css color name :: `"blue" as a color` or `〈color blue〉`
 - :: adds the first with the opposite of the second (binary) or inverts the color (unary)
 ! :: inverts the color
 ~= :: the compared colors have the same _name representation_
-| All values are evaluated as `true`. Default value: `#000000`
+| All values are evaluated as `true`. Default value: `0x000000`
 
 | paths
 |
@@ -116,6 +118,15 @@ n ^ a :: Go back `n` directories from `a`
  @a :: (unary) prepends the current working directory to `a`
  ~a :: (unary) prepends the home directory to `a`
 | `//`
+
+| symbols
+|
+[horizontal]
+#symbol :: Literal
+#'symbol name' :: Symbol with non-alphanumeric characters
+
+|
+_Same operations as strings_
 
 | regexes
 | 
@@ -146,7 +157,7 @@ Whitespace shown here is mandatory (no whitespace = does not allow whitespace ar
 | `+a->b+`
 | Mutation call
 | `a = a.b` (`b` can be an operator)
-| Switching a boolean variable `+turned-on->!+`
+| Switching a boolean variable `+turned_on->!+`
 
 | `+a b= c+`
 | Binary operator mutation
@@ -160,7 +171,7 @@ Whitespace shown here is mandatory (no whitespace = does not allow whitespace ar
 
 | `+a-->b+`
 | Functionnal assignement call
-| `a = b(a)` (a can be a map of functions)
+| `a = b(a)` (a can be a map)
 | Applying one function to a bunch of variables
 ```
 [a, b, c, d, e]-->send_to_server
@@ -169,18 +180,30 @@ Whitespace shown here is mandatory (no whitespace = does not allow whitespace ar
 | `extract [a: b, c, d] from e`
 | Variables extraction
 |
-You can also use glob patterns, much like modules importing
 ```
 a = e.b
 c = e.c
 d = e.d
 ```
+| You can also use glob patterns, much like modules importing:
+```
+extract tag_* from HTML
+--- same as
+tag_a = HTML.tag_a
+tag_b = HTML.tag_b
+--- etc.
+```
+
+| =a
+| Symetric key-value pair
+| `a = a`
 | 
 
 | :a
-| Automorphic key-value pair
+| Symetric named parameter-value pair
 | `a: a`
 | Passing a named argument to a function when the variable's name is the same as the function's argument name
+
 ```
 extract [age, name] from persons.first
 
@@ -195,18 +218,18 @@ a `map`.
 OOP is approched diffrently: 
 
 * Objects are just maps
-* Classes define map structures, and are simply some huge syntactic sugar for a map "factory"
+* Classes define map structures, and are simply some huge syntactic sugar for a map-returning function or "factory"
 * The syntax `instance = new CLASS_NAME` is syntactic sugar for `instance = CLASS_NAME.new`
 * Each map's _item_ holds his position in the map with an _index_. In the special case of "arrays" or "lists", _indexes_ and _keys_ are equivalent, but they're not to be confused.
 
 ==== Declaration 
 [horizontal]
-pairs :: `key: value` or simply `value`. 
+pairs :: `key = value` or simply `value`. 
 pairs separator :: a newline, a comma `,` or both
 ```
 my_map = [
-  lorem: "ipsum"
-  dolor: "sit amet."
+  lorem = "ipsum"
+  dolor = "sit amet."
 ]
 
 my_list = [
@@ -218,8 +241,8 @@ Since this is syntactic sugar for setting the map's items one at a time, you _ca
 
 ```
 my_map = [
-  lorem: "ipsum"
-  dolor: "§test sit amet." § [test: my_map.lorem] --- works!
+  lorem = "ipsum"
+  dolor = "§test sit amet." § [test: my_map.lorem] --- works!
   "thing" --- when the key is not specified, the index is used
 ]
 
@@ -250,8 +273,8 @@ The `iterate` keyword is used:
 
 ```
 my_map = [
-  lorem: "ipsum"
-  dolor: "sit amet."
+  lorem = "ipsum"
+  dolor = "sit amet."
 ]
 
 iterate over my_map
@@ -279,7 +302,7 @@ See <<Built-ins>> for more operations
 |
 
 | Inserting at index/key
-| `map.insert item, at: index` or `map.insert item, key: key`
+| `map.insert item at: index` or `map.insert item key: key`
 | 
 
 | Zipping keys & values
@@ -577,7 +600,7 @@ Then, you can define:
 
 [horizontal]
 operators:: Special methods that have the unary/binary syntactic sugar and that can be any character except alphanumeric (more details in the <<Types>> section)
-`.as_<type>` :: Special methods that will be used for the `~`/`is` and `as` operators.
+`.as_<type>` :: Special methods that will be used for the `is` and `as` operators.
 `.syntax` :: A special method that is used to describe how to declare a value of your type without using any method: this method will be called with a string, and you have to return either true--if your syntax matches the string given--or false otherwise
 
 NOTE: Regarding `.syntax`, if two syntaxes are in conflict, the _import order_ of the modules will matter: the last-imported module will win. (this means that you can even provide your own type module that extends a built-in type by inheriting its `.syntax` method!)
@@ -640,7 +663,7 @@ Works as expected.
 ==== `when`
 A switch-case statement.
 
-- Use a newline + indent or `: ` to separate condition and body.
+- Use a newline + indent or `:` + space to separate condition and body.
 - The conditional for each condition is constructed with the part after `when`
 - Only the first matched condition is executed, except when a `fallthrough` keyword is found.
 - Can be chained with `else` or `else if`
@@ -782,3 +805,19 @@ iterate over my_map with value=example if condition
       do_stuff(example)
 }
 ```
+
+== Parsing function calls
+
+```
+function_name arg1 arg2 arg3: value.method arg5.other_method
+--- is parsed as...
+function_name(arg1, arg2, arg3: value.method(), arg5).other_method()
+```
+
+- The first token is the function name
+- Next, arguments are separated by spaces or commas.
+- A named argument or parameter is denoted by `param: value`
+
+.Rules for chained calls
+- Inside a named argument value, `.my_method.another_one` is treated as part of the *named parameter's value*. Though, to call a method 
+- Outside a named argument value, `.my_method` *closes the arguments list*. (eg. `f a b.c` is interpreted as `f(a, b).c()`)
