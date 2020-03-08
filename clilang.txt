@@ -1,0 +1,21 @@
+PROGRAM creations
+  DESCRIBE
+    Manage all of your creations, programming-related or not!
+  OPTIONS
+    --help: Show usage information
+    --version: Show installed version
+    --for=DIRECTORY
+      Execute the action on the creation located at DIRECTORY
+      Default: .
+  STORE FILES in ~/.creations
+    config: config.yaml
+    other: projects.toml
+
+COMMAND new <type> <name>
+  DESCRIBE
+    Creates a new <type> project named <name>.
+  OPTIONS
+    -i, --in=DIRECTORY
+      Creates the project in DIRECTORY
+      Default: .
+    
