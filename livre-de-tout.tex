@@ -1,0 +1,502 @@
+\documentclass[a4paper]{book}
+ 
+% - taille de la fonte    : 10pt, 11pt, 12pt
+% - recto ou recto-verso    : oneside, twoside
+ 
+% Chargement d'extensions
+\usepackage[a4paper, total={6.5in, 9.5in}]{geometry}
+\usepackage[utf8]{inputenc}    
+\usepackage[french]{babel}
+\AtBeginDocument{\def\labelitemi{$\bullet$}}
+\usepackage{amsmath, amssymb}
+\usepackage{chemfig}
+\usepackage{chemformula}
+\usepackage{float}
+\usepackage{dsfont}
+\usepackage{cancel}
+\usepackage{pgfplots}
+\usepackage{dsfont}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{calc}  
+\usepackage{enumitem}  
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{ {./} }
+\usetikzlibrary{shapes.arrows}
+\let\ce\ch
+ 
+% Informations le titre, le(s) auteur(s), la date
+\title{Mes connaissances en Mathématiques, Physique, Chimie, Mécanique, Électronique et Programmation}
+\author{Ewen Le Bihan}
+\date{\today}
+ 
+\begin{document}
+ 
+\maketitle
+ 
+    % Le prologue du livre
+    \frontmatter
+ 
+    \chapter{Remerciements}
+    \paragraph{}
+    La plupart des connaissances contenues dans ce livre proviennent de mon éducation, qu'elle provienne du système scolaire, de vidéos YouTube, d'expériences d'autodidacte, de tutoriels sur diverses sites, de \emph{Wikipédia} ou de \emph{stackoverflow}. Je tiens particulièrement à remercier mes professeurs de matière scientifique du collège et lycée, auquel je dois la plupart de mes connaissances scientifiques.
+    \paragraph{}
+    Pour le reste de mes connaissances, la maîtrise de l'anglais m'a permis de profiter des millions de vidéos éducatives réalisés par des personnes ou équipes très sérieuse, dont ``Numberphile", ``3Blue1Brown", ``Kurzgesagt" sont mes sources les plus fréquentes.
+    \paragraph{}
+    Wikipédia, autant anglais que français, et le site ``wolframalpha" m'a permis la découverte de nombreux concepts mathématiques intéréssants, que je ne maîtrise malheureusement pas autant que ceux inclus dans les programmes du système éducatif français.
+    \paragraph{}
+    En matière de programmation, le forume d'entre-aide ``stackoverflow" et les documentations des différents projets m'ont permis d'acquérir ce que je sais.
+    \chapter{Introduction}
+    \paragraph{}
+    Comparablement au doute cartésien de Descartes, mes révisions en classe de Terminale S m'ont conduit à redéfinir rigoureusement toutes mes connaissances dans les différentes matières scientifiques, dans le but de poser des connaissances solides.
+    \paragraph{}
+    Ce livre devrait contenir absoluement tout ce que je sais, et être compréhensible par un individu n'ayant \emph{absoluement aucune connaissance}, excepté la langue française. Le contenu de chaque partie est pensé pour assumer et faire référence à des concepts uniquement vus dans des parties précédentes: ainsi, rien n'est assumé et tout est défini.
+    \paragraph{}
+    Le livre est aussi pensé pour être évolutif: au cours de mes années d'étude, je reviendrait sur certains chapitres et en ajouterait de nouveaux au fur et à mesure que j'apprends de nouveaux concepts.
+    \paragraph{}
+    Ce livre n'a cependant pas pour objectif de permettre la maîtrise des sujets abordés, puisque -- sinon quelques exemples -- il est exempt d'exercices d'entraînement, essentiels à la maîtrise d'une notion.
+    \paragraph{}
+    Dans la partie Mathématiques, certains concepts étant compliqués à définir rigoureusement -- particulièrement au début -- ils sont expliqués par des phrases, sans aucune expression mathématique (puisque celles-ci n'ont pas encore était définies).
+ 
+    % Corps du livre
+    \mainmatter
+ 
+    \part{Mathématiques}
+    \chapter*{Introduction}
+    \paragraph{}
+    J'avais pour objectif initial de regrouper les notions par thèmes -- toutes les opérations mathématiques sont définies au même endroit, que l'opérateur est était vu au primaire ou au lycée -- car je trouvais cette organisation bien plus claire et logique.
+    \paragraph{}
+    Cependant, je me suis vite rendu compte que cette manière de procéder s'avèrerait difficile, étant donné qu'il m'est impossible de définir une notion si elle s'appuie sur d'autres qui n'ont pas encore étaient définies
+    \paragraph{}
+    Comme cette deuxième idée me paraissaît plus importante, j'ai essayé au maximum de regrouper thématiquement les notions tout en m'assurant que rien n'est utilisé sans avoir était défini.
+    \paragraph{}
+    L'obstacle principale à ce défi est l'exemple. En effet, beaucoup de notions sont définissables, mais bien moins évidentes sans exemples, qui requiert parfois plus de notions que définies jusqu'alors.
+    \paragraph{}
+    Le compromis que j'ai trouvé, c'est de limiter le nombre d'exemples au minimum vital, et de parfois introduire certaines notions en amont, puis d'include une référence au chapitre dans la partie définissant le reste. %Par exemple, l'équation est définie avant d'aborder les relations, alors que s'en est une: dans le chapitre des relations et de la logique, je débute la section sur les relations par une référence à la partie définissant l'égalité.
+    \chapter{Les relations}
+    \paragraph{}
+    Avant d'aborder les nombres, il est nécéssaire d'introduire la notion d'égalité. Ce chapitre n'est composé que de cette notion, et est par conséquent très court, mais il est nécéssaire d'établir cette définition, car la quasi-totalité du reste dépend de ceci.
+    \section{Les expressions mathématiques}
+    \paragraph{}
+    Une expression mathématique est un suite\footnote{Au sens commun} d'objets mathématiques, principalement des opérateurs et des quantités.
+    \section{Composition d'une relation}
+    \paragraph{}
+    Une relation est composée de deux expressions, appelées \emph{membres}, séparés par un opérateur de relation, qui spécifie de quelle manière l'on veut tester les quantités exprimées par les deux expressions.
+    \section{Équations et inéquations}
+    \paragraph{}
+    Équation et inéquation sont deux hyponymes de relation. L'opérateur de relation utilisé permet de choisir lequel des deux noms utiliser.
+    \paragraph{}
+    Les équations désigne des relations ou les deux membres sont équivalents\footnote{Au sens commun}. Inéquation est un antonyme d'équation.
+    \section{Les opérateurs de relation}
+    \subsection{L'égalité $=$}
+    L'opérateur de relation le plus important est sans nul doute $=$, l'opérateur d'égalité. Il teste si les quantités exprimés par les deux membres sont identiques. On dit alors que les membres sont égaux.
+    \subsection{Les opérateurs contraires}
+    La plupart des opérateurs de relation possèdent leur contraire, indiqué en barrant le symbole. Par exemple, le contraire de l'opérateur d'égalité $=$ est $\not=$
+    \paragraph{}
+    \subsection{Opérateurs de comparaison $>$, $<$, $\leq$ et $\geq$}
+    \paragraph{}
+    Les opérateurs de comparaison permettent de tester si un la quantité exprimée par un membre de l'expression est plus grand (dit ``supérieur") ou moins (dit ``inférieur") que l'autre. Ceci prendra plus de sens lorsque nous auront défini les nombres entiers relatifs (voir \ref{sec:math--obj--sets--Z})
+    \paragraph{}
+    Les différents opérateurs de comparaison sont très similaires et peuvent être expliqué dans un tableau
+    \begin{table}[H]
+      \centering
+      \begin{tabular}{c|cc}
+        & Plus grand que        & Plus petit que         \\\hline
+        Strictement & $>$                   & $<$                    \\
+        Ou égal     & $\geq$ ou $\geqslant$ & $\leq$ ou $\leqslant$
+      \end{tabular}
+      \caption{Opérateurs de comparaison}
+      \label{tab:comparison-operators}
+    \end{table}
+    \paragraph{}
+    \small Les variantes $\geqslant$ et $\leqslant$ sont de simples variantes stylistiques
+    \paragraph{}
+    %TODO: "ou égal" pas ouf
+    La notion d'inégalité stricte est une nuance assez importante: l'inégalité stricte exclue le cas où les deux membres sont égaux:
+    écrire $A \geq B$, c'est tester que $A$ est supérieur à $B$ \textbf{ou} que $A$ est égal à $B$. Si $A = B$, $A \geq B$ sera vrai, tandis que $A > B$ ne le sera pas.
+    \paragraph{}
+    Une logique analogue s'applique à $\leq$ et $<$.
+    
+    \section{Les autres opérateurs de relation}
+    \paragraph{}
+    Il existe nombre d'autres opérateurs de relation, mais leur définition ne fait sens qu'après définition des objets sur lesquels ils s'appliquent.
+    Les 
+    
+    
+    \chapter{Les objets mathématiques}
+    \paragraph{}
+    Notre monde est constitué d'objets de nature diverses. Afin de correctement modéliser et ainsi être utile au monde, on ne peut limiter les mathématiques à de simples nombres. Ceci représentent des valeurs numériques, mais qu'en est-il des ensembles de valeurs? d'actions? de concepts?
+    \section{Les nombres}
+    \paragraph{}
+    L'objet fondateur des mathématiques, celui qui est presque intuitif, est le nombre. Représenté par une suite de chiffres, un nombre est image d'une quantité dans le monde réel.
+    \paragraph{}
+    Si l'on a trois pommes devant nous, le nombre de pommes devant nous est représenté par un caractère, ``3". Cependant, si les mots de la langue française suffisent à décrire une quantité de manière exace sans avoir besoin de créer de tout nouveaux caractères, au fur et à mesure que les nombres s'ajoutent utiliser une suite de mots devient vite fastidieux: ``trois mille quatre cent soixante dix neuf" contre ``3479", il n'y a pas photo.%TODO: bof comme expression
+    \paragraph{}
+    On utilise donc dix nouveaux caractère pour représenter des quantités, appelés ``chiffres": 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    \paragraph{}
+    Cependant, quand une quantité dépasse 9, il faut un moyen de représenter une quantité plus grande: les nombres, juxtapositions de chiffres, permettent de représenter des quantités arbritrairement grandes.
+    \paragraph{}
+    Quand on arrive à 9, pour passer à la quantité immédiatement plus grande, on groupe en réalité les quantités par dix: le chiffre le plus à gauche du nombre représente le groupe le plus grand, allant par ordre décroissant de taille jusqu'aux unités.
+    \paragraph{}
+    On décompose la quantité ``trois mille quatre cent soixante-dix neuf" en milliers, centaines, dizaines et unités.
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{l|l}
+            nom du groupe & chiffre\\\hline
+            milliers & 3 \\
+            centaines & 4 \\
+            dizaines & 7\\
+            unités & 9\\
+        \end{tabular}
+        \caption{Décomposition du nombre ``3479"}
+        \label{tab:number_decomposition}
+    \end{table}
+    
+    \paragraph{}
+    Chaque groupe peut être égal à zéro: ``0009" représente la même quantité que ``009", ``09" ou ``9".
+    
+    \section{Les symboles}
+    \paragraph{}
+    S'apparentant à des nombres car représentés par un unique caractère, les symboles représentes en vérité des concepts et non des quantités précises et concrètes. Prenons par exemple le symbole le plus connu, l'infini $\infty$.
+    \paragraph{}
+    Compter ``jusqu'à 5", c'est énumérer tout les nombres de zéro à cinq. Mais "énumérer tout les nombres", c'est compter de zéro à l'infini. On voit bien comment l'on pourrait compter jusqu'à l'infini, grâce à notre système de représentation de nombres par groupes de dix, on peut en effet représenter des quantités arbitrairement grandes. Cependant, quel est le dernier nombre ?
+    \paragraph{}
+    Ce dernier nombre, c'est l'infini, $\infty$. Cependant, impossible de représenter $\infty$ avec notre système de nombres: ce n'est pas une quantité précise, c'est la plus grande quantité possible, que l'on ne peut manipuler directement.
+    \paragraph{}
+    On utilise donc ce symbole pour représenter, divers résultats en mathématiques, bien que l'on ne puisse décrire une quantité par celui-ci.
+    
+    \section{Les ensembles}
+    Les ensembles sont des objets mathématiques utilisés pour représenter une collection d'objets, qu'elle soit de taille finie ou infinie.
+    \subsection{Ensembles de nombres communs}
+    \subsubsection{Les entiers naturels $\mathds{N}$}
+    Tout les nombres utilisés pour compter sont dans $\mathds{N}$: 0, 1, 2, 3, 4, 5... jusqu'à l'infini.
+    
+    \label{sec:math--obj--sets--Z}
+    \subsubsection{Les entiers relatifs $\mathds{Z}$}
+    \paragraph{}
+    En plus des entiers naturels, les entiers relatifs incluent les nombres négatifs. 
+    \paragraph{}
+    Ceci, notés exactement comme les nombres positifs, en rajoutant un symbole "moins", noté $-$, ne représente plus l'action de compter un nombre de pommes présentes devant nous, mais sont bien utiles à la représentation, par exemple, de dettes ou de pertes.
+
+    \paragraph{}
+    Les nombres ayant un symbole $-$ devant eux sont dits négatifs, tandis que les autres sont dits positifs.
+    
+    \subsubsection{Les décimaux $\mathds{D}$}
+    Comment représenter "un demi"? Impossible avec les entiers. On appelle les nombre entiers ainsi pour une raison: certains nombres peuvent ne pas être entiers. 
+    \paragraph{}
+    De manière analogue à la décomposition des nombres, les virgules fonctionnent par groupes, et ``4,2", ``4,20" ou ``4,200" représentent tous le même nombre.
+    \paragraph{}
+    On appelle la partie à gauche de la virgule la partie "entière", et celle de droite la partie "décimale".
+    \paragraph{}
+    On pourrait penser que les nombres décimaux, dans le langage usuel, sont simplement des nombres à virgule. Or, la définition est plus rigoureuse que cela: $\mathds{D}$ est l'ensemble des nombres à partie décimale \textbf{finie}: 0,25 contient une partie décimale finie, ``25", mais $3,1415\dots$ a une partie décimale infinie: on ne saura jamais le nombre total de décimales.
+    
+    \paragraph{}
+    La notation française utilise la virgule comme séparateur décimal, là où les anglais utilisent le point.
+    
+    \paragraph{}
+    Notons que tout les entiers ont une partie décimale implicite de ``0" (par ex. $1$, qui est en réalité $1,0$), et font par conséquent partie de $\mathds{D}$
+    
+    \subsubsection{Les rationnels $\mathds{Q}$}
+    \paragraph{}
+    La définition des nombres rationnels est encore plus subtile que celle des décimaux: on rencontre parfois des nombres à virgule ayant une partie décimale infinie, mais où l'on voit un motif se répéter: par exemple, un tiers, $1,33333333333\dots$, n'est pas un nombre décimal, puisque sa partie décimale se \textbf{répète} à l'infini. \\
+    \paragraph{}
+    Cependant, contrairement à $3,1415\dots$, on discerne bien un ``motif" se répétant à l'infini. La partie décimale de n'importe quel nombre dans laquelle un motif se répète à l'infini est dite ``périodique", et la longueur de ce motif est appelé la ``périodicité".\\
+    \paragraph{}
+    Un tiers possède une périodicité de 1, mais l'on peut aussi tomber sur d'autres nombres tel que $0,54785478547\dots$, où le motif répété est "5478": celui-ci possède une périodicité de 4. \\
+    \paragraph{}
+    La notation conventionnelle est $0,\overline{5478}$, avec une barre horizontale placée au dessus du motif répété.
+    \paragraph{}
+    Tout les nombres ayant une partie décimale périodique appartiennent à cet ensemble. 
+    % Complètement faux:
+    %% Tout les nombres dans $\mathds{D}$ en font aussi partie, puisqu'ils possèdents tous une partie décimale se répétant une seule fois (par ex. $1,52$ a une partie décimale "52" de périodicité 2, se répétant une unique fois)
+    
+    \subsubsection{Les réels $\mathds{R}$}
+    De loin l'ensemble le plus utilisé, il contient tout les nombres "à virgule", qu'ils contiennent un nombre fini de décimales ou non, décimales périodiques ou non.
+    
+    \subsubsection{Les complexes $\mathds{C}$ et autres ensembles de nombres multidimensionnels}
+    \paragraph{}
+    \emph{La définition des nombres apparentant à cet ensemble nécéssite l'addition, définie en \ref{sec:math--obj--op--add}.}
+    
+    \paragraph{}
+    Jusqu'alors, on peut se représenter les nombres sur une ligne, avec zéro au centre, à gauche le plus petit nombre de $\mathds{R}$ (noté $-\infty$) et à droite le plus grand nombre de $\mathds{R}$ (noté $+\infty$):
+    
+    \begin{figure}[h!]
+        \centering
+        \begin{tikzpicture}
+            \draw[<->] (-5,0) -- (5,0);
+            \draw (-5,0) node [below] {$-\infty$};
+            \draw (5,0) node [below] {$+\infty$};
+            \draw (0,0) node [below] {0};
+        \end{tikzpicture}
+        \caption{La ligne des nombres réels}
+        \label{fig:numberline}
+    \end{figure}
+    
+    \paragraph{}
+    Mais, de la même manière que les dimensions d'un objet dans notre monde sont décrits par plusieurs nombres (la hauteur, la largeur et la profondeur), des nombres peuvent être exprimés par plusieurs dimensions. Les nombres à deux dimensions sont appelés \textbf{nombres complexes}, et se note ainsi:
+    
+    $$\text{nombre complexe} = \text{partie réelle} + \text{partie imaginaire}\;i$$
+    
+    \paragraph{}
+    On peut représenter ces nombres dans le \textbf{plan complexe}, avec un nombre complexe représentant un simple point:
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \draw[->] (0,-5) -- (0,5);
+            \draw[->] (-5,0) -- (5,0);
+            \draw (0,5) node[left] {$+\infty i$};
+            \draw (0,-5) node[left] {$-\infty i$};
+            \draw (5,0) node[below] {$+\infty$};
+            \draw (-5,0) node[below] {$-\infty$};
+        \end{tikzpicture}
+        \caption{Le plan complexe}
+        \label{fig:complexplane}
+    \end{figure}
+    
+    \paragraph{}
+    Tout les nombres réels sont compris dans $\mathds{C}$, car ils possèdent une partie imaginaire nulle:
+    $8 = 8 + 0i$, donc $8$ est bien compris dans $\mathds{C}$.
+    \paragraph{}
+    Les nombres complexes dits "imaginaires purs" ont une partie réelle égale à $0$
+    
+    \paragraph{}
+    Nous auront l'occasion de revenir sur ce qu'est ce $i$, et sur les utilisations de ces nombres ultérieurement.
+    
+    \subsection{Deux manières de décrire les ensembles}
+    On distingue deux types d'ensemble: les sets (ou ensembles) et les intervalles.
+    \subsubsection{Les sets}
+    \paragraph{}
+    Les anglais utilisent le mot "set" pour éviter la confusion, mais, en bon français, les ensembles décrivent à la fois le terme plus général et les "sets".
+    
+    \paragraph{}
+    Les sets permettent une description explicite des ensembles, en précisant chaque objet faisant partie de celui-ci:
+    
+    $$\{1; 2; 3; 4; 5\}$$
+    
+    est un ensemble contenant les nombres 1, 2, 3, 4 et 5.
+    
+    \paragraph{}
+    Là où les anglais peuvent utiliser une virgule pour séparer les éléments de l'ensemble, les français doivent utiliser un point virgule, la virgule étant déjà le séparateur décimal français.
+    
+    \paragraph{}
+    Contrairement au intervalles, les sets peuvent contenir n'importe quel objet mathématiques, comprenant les ensembles. (Oui oui, un ensemble d'ensembles d'ensembles est totalement possible)
+    \subsubsection{Les intervalles}
+    \paragraph{}
+    Les intervalles décrivent un ensemble de nombres par ses extrémités, qui sont soit inclues dans l'ensemble, soit exclues:
+    
+    \begin{itemize}
+        \item $[-5; 5]$ représente l'ensemble des nombres entre -5 et 5, avec 5 et -5 tout deux compris dans l'ensemble
+        \item $]-5; 5[$ représente le même ensemble, mais -5 et 5 ne sont pas contenus dans l'ensemble décrit.
+    \end{itemize}
+    
+    \paragraph{}
+    Les symboles $+\infty$ et $-\infty$ ne peuvent pas être compris dans un ensemble, car ils représentent respectivement le plus petit nombre de $\mathds{R}$ et le plus grand nombre de $\mathds{R}$, or $\mathds{R}$ est de taille infinie. On ne peut pas concrètement utiliser $\infty$ dans des calculs, car il ne représente qu'un concept, et non une quantité concrète.
+    
+    
+    \paragraph{}
+    Ainsi, voici l'ensemble $\mathds{R}$ exprimé par une intervalle:
+    
+    $$]-\infty; +\infty[$$
+    
+    \section{Les opérateurs}
+    \paragraph{}
+    Chaque opérateur représente une action que l'on applique sur un seul nombre (opérateurs dits unaires) ou deux (opérateurs dits binaires).
+    \paragraph{}
+    La description du fonctionnement d'un opérateur peut être plus complexe selon l'ensemble pris en compte, c'est pourquoi certains opérateurs expliqués ici sont expliqués différemments, en fonction de l'ensemble prit en compte.
+    \subsection{La valeur absolue $|x|$}
+    La valeur absolue assure renvoie toujours un nombre positif, que l'on l'applique à un nombre positif ou négatif. Moins rigoureusement, on peut dire que la valeur absolue enlève le signe $-$, si il y en a un.
+    \label{sec:math--obj--op--add}
+    \subsection{L'addition $a + b$}
+    L'opération la plus basique, la plus élémentaire des mathématiques est l'addition.
+    \subsubsection{Dans $\mathds{N}$}
+    \paragraph{}
+    L'addition revient simplement à prendre le nombre à gauche, et à prendre le nombre suivant, en répétant l'opération $n$ fois, $n$ étant le membre de droite.
+    \paragraph{}
+    Prenons l'opération $4 + 5$.
+    Celle-ci revient à prendre le nombre 4, puis à prendre le nombre suivant 5 fois: 4, 5, 6, 7, 8, 9: $4 + 5$ est donc égal à 9.
+    \subsubsection{Dans $\mathds{Z}$}
+    \paragraph{}
+    L'addition revient à déplacer le nombre de gauche sur la ligne des nombres selon le nombre de droite: 
+    si $a$ est négatif, on déplace vers la gauche $|b|$ fois le nombre, sinon, on déplace le déplace $b$ fois vers la droite.
+    \paragraph{}
+    Prenons l'opération $-8 + 2$. On déplace $8$ vers la droite 2 fois: -8, -7, -6: $-8 + 2 = -6$
+    \subsubsection{Dans $\mathds{R}$}
+    \paragraph{}
+    L'apparition d'une partie décimale ne complique pas tant le calcul: on additionne la partie entière de $a$ et $b$ comme on le ferait normalement, et, pour la partie décimale, on additionne jusqu'à ce que le premier groupe arrive à 10, puis on ajoute 1 aux unités, et on continue à additionner les décimales.
+    \subsubsection{Dans $\mathds{C}$}
+    Pour les additions de nombres complexes, on ajoute simplement les composantes (partie réelle et partie imaginaire) ensemble de manière indépendante: 
+    
+    $$1+3i + 5-6i = 6-3i$$
+    
+    \subsection{La soustraction $a - b$}
+    \paragraph{}
+    La soustraction consiste à ajouter $a$ à $-|b|$
+    \paragraph{}
+    Il existe aussi une version unaire de cette opérateur, qui consiste à inverser le signe. Un nombre ayant un signe inversé est appelé un opposé.
+    
+    \subsection{La division $\frac{a}{b}$}
+    \paragraph{}
+    La division permet de représenter d'une autre manière les nombres décimaux. Ainsi, "un demi" -- la moitié de "1", peut être représenté sous la forme d'une division 
+    
+    \subsection{La multiplication $a \times b$}
+    \subsubsection{Dans $\mathds{N}$}
+    La multiplication consiste à une addition répétée. On répète $b$ fois l'opération $a + a$: 
+    
+    \begin{equation*}
+        \begin{split}
+            2 \times 4 &= 2 + 2 + 2 + 2 \\
+            &= 4 + 2 +2 \\
+            &= 4 + 4 \\
+            &= 8
+        \end{split}
+    \end{equation*}
+    
+    \subsubsection{Dans $\mathds{Z}$}
+    \paragraph{}
+    La multiplication dans $\mathds{Z}$ est similaire à celle dans $\mathds{N}$, mais consiste aussi en l'application de quelques règles simples:
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{ll|l}
+            $a$ & $b$ & $a \times b$  \\
+            positif & positif & positif \\
+            positif & négatif & négatif \\
+            négatif & positif & négatif \\
+            négatif & négatif & positif
+        \end{tabular}
+        \caption{Règle des signes en multiplication}
+        \label{tab:regles_signes_multiplication}
+    \end{table}
+    
+    \paragraph{}
+    Pour calculer une multiplication dans $\mathds{Z}$, on fait $|a| \times |b|$, puis on applique la règle des signes:
+    
+    \begin{equation*}
+        \begin{split}
+            -3 \times 4 &= -(|-3| \times 4) \\
+                        &= -(3 + 3 + 3 + 3) \\
+                        &= -12
+        \end{split}
+    \end{equation*}
+    
+    \subsubsection{Dans $\mathds{R}$}
+    \paragraph{}
+    
+    
+    
+    \section{Les fonctions}
+    \paragraph{}
+    Parfois, on ne veut pas représenter une quantité directement, mais une \textbf{action que l'on appliquerait à n'importe quel quantité}. C'est l'utilité des fonctions.
+    
+    \subsection{Description de fonctions}
+    Une fonction est décrite par trois choses essentielles: son nom, son ou ses arguments et son corps.
+    \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}
+        \draw (0,0) node[scale=2] {$f:x\mapsto x + 4$};
+        \draw (-2, -0.5) -- (-1.5, -0.5);
+        \draw (-1.75, -0.5) -- (-1.75,-2) node [right] {Nom: $f$};
+        \draw (-1.125, -0.5) -- (-0.5, -0.5);
+        \draw (-1,-0.5) -- (-1,-1.5) node [right] {Argument(s): $x$};
+        \draw (0.5, -0.5) -- (2, -0.5);
+        \draw (1.25,-0.5) -- (1.25,-1) node [right] {Corps: $x + 4$};
+        \end{tikzpicture}
+        \caption{Anatomie d'une fonction}
+        \label{fig:function_anatomy}
+    \end{figure}
+    \subsubsection{Le nom de la fonction}
+    \paragraph{}
+    On peut donner n'importe quel suite de lettres à une fonction. On évite cependant d'utiliser d'autres caractères, telles que les chiffres ou encore les opérateurs, car cela créerait des confusions fatales dans l'écriture d'équations.
+    \paragraph{}
+    Souvent, cependant, les mathématiciens limitent leurs fonctions à une seule lettre, qu'elle provienne de l'alphabet latin, grec ou encore hébraïque, pour une notation plus succinte, là où les développeurs évitent cette pratique à tout prix, donnant à leur fonctions des noms les plus descriptifs possibles afin de pouvoir se retrouver dans leur code.
+    
+    \subsubsection{Les arguments}
+    \paragraph{}
+    Je l'ai dit précédemment, les fonctions représentent des actions appliquées sur n'importe quel nombre. Mais comment décrire qu'est-ce que la fonction accepte comme nombre, et comment représenter les actions sur ce nombre? On va décrire donc ce que l'on appelle des arguments. 
+    \paragraph{}
+    On va pour cela nommer les arguments par des suites de caractères, par la même logique que pour le nommage de la fonction. On pourra ensuite faire référence à ces noms dans le corps de la fonction.
+    \paragraph{}
+    Cependant, les fonctions ne sont pas toutes définies sur les mêmes intervalles: par exemple, une fonction $f:a,b\mapsto\frac{a}{b}$ qui diviserait $a$ par $b$ ne pourrait recevoir zéro comme valeur de l'argument $b$: le résultat d'une division par zéro est indéfini. 
+    \paragraph{}
+    Dans le cas des fonctions à une seule variable, on peut simplifier et dire simplement que "la fonction $f$ est définie sur $\mathds{R}^\ast$", pour dire que l'unique argument accepte uniquement des valeurs dans $\mathds{R}^\ast$. Ici, on peut dire que \textbf{le domaine de définition} de $f$ est $\mathds{R}^\ast$.
+    
+    
+    \subsubsection{Le corps}
+    \paragraph{}
+    On y vient: la partie la plus importante de la fonction, celle qui la rend utile: par quelles opérations va-t-on associer le ou les valeurs données à la fonction au résultat de l'application de cette fonction?
+    \paragraph{}
+    On écrit le corps d'une fonction comme si l'on écrivait un calcul normalement, en remplaçant seulement la valeur que prendrait l'argument par son nom, ainsi, pour écrire une fonction qui prendrait un nombre réel $x$ et qui lui ajouterait 4, on écrit $x + 4$.
+    
+    \subsection{Utilisation des fonctions}
+    \paragraph{}
+    Maintenant que nous avons notre superbe fonction $f$, qui a pour but de nous donner un nombre auquel on a ajouté 4, nous pouvont l'utiliser avec n'importe quel nombre qui appartient à l'ensemble de définition de $f$. 
+    \paragraph{}
+    Voici comment l'on note le résultat de $f$ appliqué à 3, aussi appelé l'image de $f$ par 3:
+          \begin{figure}[h]
+        \centering
+        \begin{tikzpicture}
+        \draw (0,0) node[scale=2] {$f(3)$};
+        \draw (-0.75, -0.5) -- (-0.25, -0.5);
+        \draw (-0.5, -0.5) -- (-0.5,-1.5) node [right] {Nom: $f$};
+        \draw (0.125, -0.5) -- (0.5, -0.5);
+        \draw (0.125, -0.5) -- (0.125,-1) node [right] {Valeur de(s) argument(s): $3$};
+        \end{tikzpicture}
+        \caption{Anatomie d'un "appel" à une fonction}
+        \label{fig:function_call_anatomy}
+    \end{figure}
+    
+    On comprend ainsi pourquoi une fonction ne peut avoir un nombre comme nom, sans cette règle, "$8(2)$" pourrait désigner l'image de 2 par la fonction "8" ou la multiplication de 8 et 2, ce qui rendrait cette équation vraie:
+    
+    $$\forall x \in \mathds{R}\quad 8:x\mapsto 2$$
+    \begin{equation*}
+        \begin{split}
+        8(2) &= 2 \\
+        \iff 16 &= 2
+        \end{split}
+    \end{equation*}
+    
+    (Et conduirait à une fin horrible du monde)
+    
+    \subsection{Une autre notation}
+    \paragraph{}
+    Vous verrait aussi la notation $f(x) = x + 4$, qui est en fait plus utilisée. Cette notation, contrairement à la première, définit la fonction par une équation, en expliquant que l'image de la fonction $f$ par $x$ est égale à $x + 4$.
+    \paragraph{}
+    En effet: on peut écrire l'équation $f(3) = 7$, mais, on peut aussi écrire une équation si l'argument $x$ ne prend pas une valeur particulière, mais simplement la variable $x$: $f(x)$ est donc égal à $x + 4$
+    
+    \subsection{Les opérateurs sont des fonctions}
+    Après avoir parlé des fonctions, je peux maintenant clarifier la vraie nature des opérateurs: de simples fonctions:
+    
+    \begin{itemize}
+        \item écrire $a + b$ revient à écrire $+(a, b)$, la fonction "+" ajoutant les deux arguments entre eux.
+        \item écrire $\sqrt[n]{x}$ revient à écrire $\sqrt{}(x, n)$, la fonction "$\sqrt{}$" calculant la $n$-ième racine de $x$
+    \end{itemize}
+    
+    \subsection{Les propriétés des fonctions}
+    
+    Si l'on prend une fonction $f$:
+    \begin{description}
+    \item[Parité] $f(x) = f(-x)$
+    \item[Imparité] $f(-x) = -f(x)$
+    \item[Périodique]
+        
+    \end{description}
+    %% Les annexes
+    %\appendix
+ %
+    %\chapter{Premier annexe}
+    %\chapter{Second annexe}
+ 
+    
+    \backmatter
+ 
+    \chapter{Conclusion et discussion}
+ 
+    
+    \tableofcontents    
+    \listoffigures        % Liste des figures
+    \listoftables        % Liste des tableaux
+ 
+% Fin du document
+\end{document}
